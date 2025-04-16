@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ViewSort - Your Digital QSL Card Sorter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    .input-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      padding: 12px;
+      font-size: 18px;
+      width: 300px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background-color: #222;
+      color: white;
+      text-transform: uppercase;
+      font-family: Inconsolata, monospace;
+      font-feature-settings: "zero";
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #add-button {
+      background-color: #28a745; /* Green */
+      color: white;
+    }
+    #submit-button {
+      background-color: #007bff; /* Blue */
+      color: white;
+    }
+    #clear-button {
+      background-color: #dc3545; /* Red */
+      color: white;
+    }
+    #help-button {
+      background-color: #ffc107; /* Yellow */
+      color: black;
+    }
+    #callsign-list div, #sorted-output div {
+      margin: 6px;
+      padding: 6px;
+      font-size: 20px;
+      font-family: Inconsolata, monospace;
+      font-feature-settings: "zero";
+    }
+    .excluded {
+      color: red;
+    }
+    .invalid-output {
+      color: yellow;
+    }
+    .excluded-note, .invalid-note {
+      font-size: 14px;
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .excluded-note {
+      color: #ff9999;
+    }
+    .invalid-note {
+      color: #ffff99;
+    }
+    #version-message {
+      margin-top: 20px;
+      font-size: 16px;
+      color: yellow;
+    }
+    #help-text {
+      display: none;
+      margin: 20px auto;
+      max-width: 600px;
+      font-size: 16px;
+      text-align: left;
+    }
+    #help-text p {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>ViewSort - Your Digital QSL Card Sorter</h1>
+  <div class="input-container">
+    <input type="text" id="callsign-input" placeholder="Enter callsign...">
+    <button id="add-button" onclick="addCallsign()">Add QSL Card</button>
+    <button id="submit-button" onclick="displaySortedCallsigns()">Submit</button>
+    <button id="clear-button" onclick="clearCallsigns()">Clear All</button>
+    <button id="help-button" onclick="toggleHelpMessage()">Help</button>
+  </div>
+  <div id="help-text" aria-live="polite"></div>
+  <div id="callsign-list"></div>
+  <div id="sorted-output"></div>
+  <div id="version-message"></div>
+  <script>
+    // DOM Elements
+    const callsignInput = document.getElementById('callsign-input');
+    const callsignList = document.getElementById('callsign-list');
+    const sortedOutput = document.getElementById('sorted-output');
+    const versionMessage = document.getElementById('version-message');
+    const helpText = document.getElementById('help-text');
+
+    // Application State
+    let callsigns = [];
+    let counter = 0;
+    let isHelpVisible = false;
+
+    // Configuration Constants
+    const validPrefixes = [
+      "3A", "3B", "3D2", "3DA", "3V", "TS", "4J", "4L", "4P", "4Q", "4R", "4S", "4X", "4Z",
+      "5B", "5H", "5N", "5O", "5W", "5X", "5Y", "5Z", "6V", "6W", "6Y", "7P", "7T", "7U", "7V",
+      "7W", "7X", "7Y", "8P", "8R", "9A", "9G", "9H", "9I", "9J", "9K", "9L", "9M", "9W", "9O",
+      "9P", "9Q", "9R", "9S", "9T", "9V", "A2", "A3", "A4", "A7", "A9", "AP", "AQ", "AR", "AS",
+      "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BR", "BS", "BT",
+      "BY", "BZ", "BM", "BN", "BO", "BP", "BQ", "BU", "BV", "BW", "BX", "C2", "C3", "C5", "C6",
+      "C8", "C9", "CA", "CB", "CC", "CD", "CE", "XQ", "XR", "CM", "CO", "CN", "CP", "CQ", "CR",
+      "CS", "CT", "CU", "CV", "CW", "CX", "D4", "DA", "DB", "DC", "DD", "DE", "DF", "DG", "DH",
+      "DI", "DJ", "DK", "DL", "DM", "DN", "DO", "DP", "DQ", "DR", "DU", "DV", "DW", "DX", "DY",
+      "DZ", "4D", "4E", "4F", "4G", "4H", "4I", "E7", "EA", "EB", "EC", "ED", "EE", "EF", "EG",
+      "EH", "AM", "AN", "AO", "EI", "EJ", "EK", "EL", "5L", "5M", "ER", "ES", "EU", "EV", "EW",
+      "EY", "EZ", "F", "HW", "HX", "HY", "TK", "TM", "TO", "TP", "TQ", "FK", "FO", "G", "M",
+      "2A", "2B", "2C", "2D", "2E", "2F", "2G", "2H", "2I", "2J", "2K", "2L", "2M", "2N", "2O",
+      "2P", "2Q", "2R", "2S", "2T", "2U", "2V", "2W", "2X", "2Y", "2Z", "H4", "HA", "HB", "HB0",
+      "HC", "HD", "HH", "4V", "HI", "HJ", "HK", "5J", "5K", "HL", "DS", "DT", "HO", "HP", "H3",
+      "3E", "3F", "HQ", "HR", "HS", "E2", "HV", "I", "J2", "J3", "J7", "JA", "JB", "JC", "JD",
+      "JE", "JF", "JG", "JH", "JI", "JJ", "JK", "JL", "JM", "JN", "JO", "JP", "JQ", "JR", "JS",
+      "7J", "7K", "7L", "7M", "7N", "8J", "8K", "8L", "8M", "8N", "JT", "JU", "JV", "JY", "LA",
+      "LB", "LC", "LD", "LE", "LF", "LG", "LH", "LI", "LJ", "LK", "LL", "LM", "LN", "JW", "JX",
+      "3Y", "LO", "LP", "LQ", "LR", "LS", "LT", "LU", "LV", "LW", "AY", "AZ", "LX", "LY", "LZ",
+      "OA", "OB", "OC", "4T", "OD", "OE", "OF", "OG", "OH", "OI", "OJ", "OK", "OL", "OM", "ON",
+      "OO", "OP", "OQ", "OR", "OS", "OT", "OU", "OV", "OW", "OX", "OY", "OZ", "P4", "PA",
+      "PB", "PC", "PD", "PE", "PF", "PG", "PH", "PI", "PJ", "PP", "PQ", "PR", "PS", "PT", "PU",
+      "PV", "PW", "PX", "PY", "ZV", "ZW", "ZX", "ZY", "ZZ", "PZ", "R", "UA", "UB", "UC", "UD",
+      "UE", "UF", "UG", "UH", "UI", "S2", "S3", "S5", "SA", "SB", "SC", "SD", "SE", "SF", "SG",
+      "SH", "SI", "SJ", "SK", "SL", "SM", "SN", "SO", "SP", "SQ", "SR", "ST", "SU", "SV", "SW",
+      "SX", "SY", "SZ", "T7", "TA", "TB", "TC", "TF", "TG", "TD", "TI", "TR", "TU", "TZ", "UJ",
+      "UK", "UL", "UM", "UN", "UO", "UP", "UQ", "UR", "US", "UT", "UU", "UV", "UW", "UX", "UY",
+      "UZ", "EM", "EN", "EO", "V2", "V3", "V4", "V5", "V7", "V8", "VA", "VB", "VC", "VD", "VE",
+      "VF", "VG", "VO", "VX", "VY", "CF", "CG", "CH", "CI", "CJ", "CK", "CY", "CZ", "XJ", "XK",
+      "XL", "XM", "XN", "XO", "VH", "VI", "VJ", "VK", "VL", "VM", "VN", "AX", "VP2E", "VP2M",
+      "VP2V", "VP5", "VP9", "VR2", "VT", "VU", "VV", "VW", "K1", "N1", "W1", "K2", "N2", "W2",
+      "K3", "N3", "W3", "K4", "N4", "W4", "K5", "N5", "W5", "K6", "N6", "W6", "K7", "N7", "W7",
+      "K8", "N8", "W8", "K9", "N9", "W9", "K0", "N0", "W0", "KG4", "KH2", "KH3", "KH6", "KH7",
+      "KL", "KP3", "KP4", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL",
+      "N", "XA", "XB", "XC", "XD", "XE", "XF", "XG", "XH", "XI", "4A", "4B", "4C", "6D", "6E",
+      "6F", "6G", "6H", "6I", "6J", "XT", "XX9", "XY", "XZ", "YB", "YC", "YD", "YE", "8A", "8B",
+      "8C", "8D", "8E", "8F", "8G", "8H", "8I", "YI", "HN", "YJ", "YK", "6C", "YL", "YN", "HT",
+      "YO", "YP", "YQ", "YR", "YS", "YT", "YU", "YV", "YW", "YX", "YY", "Z2", "Z3", "ZA", "ZB",
+      "ZF", "ZL", "ZM", "ZP", "ZR", "ZS", "ZT", "ZU", "4U1ITU", "EP", "EQ", "9B", "9C", "9D",
+      "EX", "HL9", "VP8"
+    ];
+
+    const excludedPrefixes = [
+      "R", "UA", "UB", "UC", "UD", "UE", "UF", "UG", "UH", "UI",
+      "EU", "EV", "EW",
+      "UR", "US", "UT", "UU", "UV", "UW", "UX", "UY", "UZ", "EM", "EN", "EO"
+    ];
+
+    const noNationalQSLSortService = [
+      "3B", "3D2", "3DA", "3V", "TS", "7P", "9L", "9V", "A3", "A9", "C2", "C5", "C6", "CN",
+      "CP", "D4", "H4", "HH", "4V", "HV", "PZ", "ST", "V3", "V4", "V7", "VP2E", "VP2M", "VP9",
+      "XY", "XZ", "Z2", "ZA", "EP", "EQ", "9B", "9C", "9D"
+    ];
+
+    const specialSortingMethod = {
+      'JA': ['JA0', 'JA1', 'JA2', 'JA3', 'JA4', 'JA5', 'JA6', 'JA7', 'JA8', 'JA9'],
+      'W': ['W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'K0', 'K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8', 'K9', 'N0', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'KH6', 'KL7', 'KP4'],
+      'VE': ['VE1', 'VE2', 'VE3', 'VE4', 'VE5', 'VE6', 'VE7', 'VE8', 'VE9', 'VY0', 'VY1', 'VO1', 'VO2'],
+      'VK': ['VK1', 'VK2', 'VK3', 'VK4', 'VK5', 'VK6', 'VK7', 'VK8', 'VK9'],
+      'UA': ['UA0', 'UA1', 'UA2', 'UA3', 'UA4', 'UA5', 'UA6', 'UA7', 'UA8', 'UA9']
+    };
+
+    // Event Listeners
+    callsignInput.addEventListener('keypress', function (event) {
+      if (event.key === 'Enter' && callsignInput.value.trim()) {
+        addCallsign();
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Space' && document.activeElement !== callsignInput) {
+        event.preventDefault();
+        displaySortedCallsigns();
+      }
+    });
+
+    // Core Functions
+    function addCallsign() {
+      if (!callsignInput.value.trim()) return;
+      const callsign = callsignInput.value.trim().toUpperCase();
+      callsigns.push({ callsign, number: counter++ });
+      renderCallsignList();
+      callsignInput.value = '';
+      callsignInput.focus();
+    }
+
+    function clearCallsigns() {
+      callsigns = [];
+      counter = 0;
+      callsignList.innerHTML = '';
+      sortedOutput.innerHTML = '';
+      helpText.style.display = 'none';
+      isHelpVisible = false;
+      window.speechSynthesis.cancel();
+    }
+
+    function renderCallsignList() {
+      callsignList.innerHTML = '';
+      callsigns.forEach(({ callsign, number }) => {
+        const div = document.createElement('div');
+        div.textContent = `${callsign} #${number}`;
+        callsignList.appendChild(div);
+      });
+      callsignList.style.display = isHelpVisible ? 'none' : 'block';
+    }
+
+    function sortCallsigns() {
+      return [...callsigns].sort((a, b) => {
+        const prefixA = extractPrefix(a.callsign);
+        const prefixB = extractPrefix(b.callsign);
+
+        let areaA = a.callsign;
+        let areaB = b.callsign;
+        for (let country in specialSortingMethod) {
+          const areas = specialSortingMethod[country];
+          const matchA = areas.find(area => a.callsign.startsWith(area));
+          const matchB = areas.find(area => b.callsign.startsWith(area));
+          if (matchA && matchB) {
+            areaA = matchA;
+            areaB = matchB;
+            return areas.indexOf(areaA) - areas.indexOf(areaB) || a.callsign.localeCompare(b.callsign);
+          }
+        }
+
+        return a.callsign.localeCompare(b.callsign);
+      });
+    }
+
+    function displaySortedCallsigns() {
+      callsignList.innerHTML = '';
+      helpText.style.display = 'none';
+      isHelpVisible = false;
+      window.speechSynthesis.cancel();
+      const sorted = sortCallsigns();
+      sortedOutput.innerHTML = '';
+
+      sorted.forEach(({ callsign, number }) => {
+        console.log(`Processing callsign: ${callsign}`);
+        const prefix = extractPrefix(callsign);
+        console.log(`Extracted prefix: ${prefix}`);
+        console.log(`Considered prefixes: ${validPrefixes.filter(p => callsign.startsWith(p)).join(', ') || 'none'}`);
+
+        const isExcluded = excludedPrefixes.some(p => callsign.startsWith(p));
+        const isNoQSL = noNationalQSLSortService.includes(prefix);
+        const isUnknown = !validPrefixes.includes(prefix) &&
+                          !specialSortingMethod.W.some(a => callsign.startsWith(a)) &&
+                          !specialSortingMethod.VE.some(a => callsign.startsWith(a)) &&
+                          !specialSortingMethod.VK.some(a => callsign.startsWith(a)) &&
+                          !specialSortingMethod.UA.some(a => callsign.startsWith(a));
+
+        console.log(`Validation result: isExcluded=${isExcluded}, isNoQSL=${isNoQSL}, isUnknown=${isUnknown}`);
+
+        const div = document.createElement('div');
+        if (isExcluded) {
+          div.className = 'excluded';
+          div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+          div.innerHTML += `<span class="excluded-note">This QSL card cannot be sent via the agency at this time. Please take it out and set it aside for later mailing.</span>`;
+        } else if (isNoQSL) {
+          div.className = 'invalid-output';
+          div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+          div.innerHTML += `<span class="invalid-note">This country has no national QSL service and cannot be sent via the agency.</span>`;
+        } else if (isUnknown) {
+          div.className = 'invalid-output';
+          div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+          div.innerHTML += `<span class="invalid-note">Unknown prefix. Please verify the callsign.</span>`;
+        } else {
+          div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+        }
+        sortedOutput.appendChild(div);
+      });
+    }
+
+    function toggleHelpMessage() {
+      const message = [
+        "Hi, I'm ViewSort, your digital QSL card organizer. My job is to help you sort QSL cards before you send them off.",
+        "Once you've entered your callsign, just press the \"enter\" key on your keyboard or the green \"Add QSL card\" button, you'll notice as you enter more QSL cards you'll see a number, this is a temporary number that you write on your QSL card.",
+        "Once you've entered all the cards, press the spacebar or the blue \"submit\" button and all the cards will be sorted according to the rules of the game.",
+        "All you have to do after I've sorted them for you is follow the numbers you've written on the card in the order I've put them on your screen.",
+        "You may experience some errors after I've sorted them, but then you'll read what's wrong and make the recommendation I have given.",
+        "I wish you a nice day. 7 3."
+      ];
+
+      if (isHelpVisible) {
+        helpText.style.display = 'none';
+        callsignList.style.display = 'block';
+        isHelpVisible = false;
+        window.speechSynthesis.cancel();
+      } else {
+        helpText.innerHTML = message.map(line => `<p>${line}</p>`).join('');
+        helpText.style.display = 'block';
+        callsignList.style.display = 'none';
+        isHelpVisible = true;
+
+        const utterance = new SpeechSynthesisUtterance(message.join(' '));
+        utterance.lang = 'en-US';
+        utterance.onend = () => {
+          helpText.style.display = 'none';
+          callsignList.style.display = 'block';
+          isHelpVisible = false;
+        };
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function extractPrefix(callsign) {
+      const possiblePrefixes = validPrefixes
+        .filter(p => callsign.startsWith(p))
+        .sort((a, b) => b.length - a.length);
+      if (possiblePrefixes.length > 0) {
+        return possiblePrefixes[0];
+      }
+      if (callsign.match(/^[KNW][0-9]/)) {
+        return callsign.substring(0, 2);
+      }
+      if (callsign.match(/^[0-9][A-Z0-9]/)) {
+        return callsign.substring(0, 2);
+      }
+      if (callsign.match(/^[A-Z][A-Z0-9]?/)) {
+        return callsign.match(/^[A-Z][A-Z0-9]?/)?.[0] || '';
+      }
+      return '';
+    }
+
+    async function checkVersion() {
+      const CURRENT_VERSION = "GHv1.0";
+      const GITHUB_REPO = "rSignal86/ViewSort";
+      try {
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`);
+        if (!response.ok) throw new Error("Could not fetch version info");
+        const data = await response.json();
+        const latestVersion = data.tag_name;
+
+        if (latestVersion && latestVersion !== CURRENT_VERSION) {
+          versionMessage.innerHTML = `New version available: <strong>${latestVersion}</strong>. Visit <a href="https://github.com/${GITHUB_REPO}" target="_blank">GitHub</a> to download.`;
+        } else {
+          versionMessage.textContent = `You are using the latest version: ${CURRENT_VERSION}.`;
+        }
+      } catch (error) {
+        versionMessage.textContent = "Could not check for version updates.";
+        console.error("Version check failed:", error);
+      }
+    }
+
+    checkVersion();
+  </script>
+</body>
+</html>
