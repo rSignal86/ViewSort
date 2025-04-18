@@ -3,14 +3,14 @@
 ## ViewSort is a simple yet intelligent web tool built to help amateur radio operators efficiently sort their QSL cards before mailing them.  
 It validates, organizes, and flags callsigns according to common QSL bureau rules. If you don't know how to sort QSL cards, ViewSort will do it for you.  
 All you have to do is write the callsign into the program and note the number it gives you back on the card.  
-When you are done, click "Submit" and follow the numbers from top to bottom. The program will also tell you which cards need more attention.
+When you're done, click "Submit" and follow the numbers from top to bottom. The program will also tell you which cards require more attention.
 
-> 🎉 **New in Version GHv2.0:** Now you can also generate a **PDF** with the sorted results – perfect for printing or archiving.
+> 🎉 **New in Version GHv2.0:** You can now generate a **PDF** with the sorted results – perfect for printing or archiving.
 
 The program works best in **Microsoft Edge**, especially for the help voice feature. But it works in **all modern browsers** for the sorting part.  
 No installation required. Simply clone or download the repository and open the `ViewSort.html` file in your browser.
 
-Created with the help of **AI** and **LB6QJ**, working together to help the amateur radio community with ❤️.
+Created with the help of **AI** and **LB6QJ**, working together to support the amateur radio community with ❤️.
 
 ---
 
@@ -19,7 +19,7 @@ Created with the help of **AI** and **LB6QJ**, working together to help the amat
 - Automatic identification of country prefixes
 - Built-in country database with sorting rules and QSL service info
 - Assigns temporary numbers to each QSL card for manual sorting
-- **Warnings for excluded or unsupported QSL destinations**
+- Warnings for excluded or unsupported QSL destinations
 - **PDF generation** for sorted QSL list (new in GHv2.0)
 - Built-in interactive help with **voice guidance**
 - Modular and expandable prefix system
@@ -39,20 +39,33 @@ Created with the help of **AI** and **LB6QJ**, working together to help the amat
 
 ---
 
-## ♿ People with Disabilities
-I'm passionate about making this tool accessible for everyone – including people with visual and hearing impairments.  
-That's why ViewSort includes:
+## ♿ Accessibility
+We care deeply about inclusion. ViewSort is designed to be accessible for users with visual or hearing impairments:
 - Interactive help via speech (Web Speech API)
-- Clear visual indicators for sorting status
+- Clear visual indicators and contrast
 - Simple layout optimized for screen readers
 
 ---
 
-# 🔧 Built With
+## 🔐 Privacy & GDPR Compliance
+
+Your privacy is a priority. ViewSort is a **fully client-side tool** – all operations happen inside your browser.
+
+- No accounts or sign-ins required  
+- No cookies or tracking  
+- No server communication or data collection  
+- No data is stored or transmitted
+
+✅ **This makes ViewSort fully GDPR compliant.**  
+You can safely use it for personal use, clubs, or events without compromising anyone’s personal data.
+
+---
+
+## 🔧 Built With
 - HTML5 / CSS3 / JavaScript
 - Web Speech API (for voice assistance)
 - jsPDF (for PDF export)
-- AI-assisted development (with a bit of ham spirit)
+- AI-assisted development (with a little ham radio magic)
 
 ---
 
@@ -62,16 +75,16 @@ That's why ViewSort includes:
   - PDF Export functionality
   - Modular prefix data system
   - Improved structure and maintainability
-  - Accessibility improvements
+  - Accessibility and privacy improvements
 
 ---
 
-## 🔢 Version Number Interpretation
+## 🔢 Version Number Format
 Format: **Major.Minor.Patch**
 
 Example: `2.5.1`  
-- `2` = Major version (big new features or changes)
-- `5` = Minor version (small additions or tweaks)
+- `2` = Major update (big new features or redesign)
+- `5` = Minor update (added features or improvements)
 - `1` = Patch (bug fixes or refinements)
 
 ---
