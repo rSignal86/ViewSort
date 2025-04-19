@@ -5,7 +5,7 @@ It validates, organizes, and flags callsigns according to common QSL bureau rule
 All you have to do is write the callsign into the program and note the number it gives you back on the card.  
 When you're done, click "Submit" and follow the numbers from top to bottom. The program will also tell you which cards require more attention.
 
-> 🎉 **New in Version GHv2.0:** You can now generate a **PDF** with the sorted results – perfect for printing or archiving.
+> 🎉 **New in Version GHv2.1.0:** You can now generate a **PDF** with the sorted results – perfect for printing or archiving.
 
 The program works best in **Microsoft Edge**, especially for the help voice feature. But it works in **all modern browsers** for the sorting part.  
 No installation required. Simply clone or download the repository and open the `ViewSort.html` file in your browser.
@@ -76,6 +76,10 @@ You can safely use it for personal use, clubs, or events without compromising an
   - Modular prefix data system
   - Improved structure and maintainability
   - Accessibility and privacy improvements
+- **GHv2.1.0**
+  - Cleaning code
+  - Switch position on some button to have it in a more logic order.
+  - Have all countries you cannot send QSL cards to via bureau in one category to avoid political discrimination.
 
 ---
 
