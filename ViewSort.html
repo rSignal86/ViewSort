@@ -51,6 +51,7 @@
     #clear-button {
       background-color: #dc3545;
       color: white;
+      margin-left: 30px;
     }
     #help-button {
       background-color: #ffc107;
@@ -68,21 +69,13 @@
       font-family: Inconsolata, monospace;
       font-feature-settings: "zero";
     }
-    .excluded {
-      color: red;
-    }
     .invalid-output {
       color: yellow;
     }
-    .excluded-note, .invalid-note {
+    .invalid-note {
       font-size: 14px;
       display: inline-block;
       margin-left: 10px;
-    }
-    .excluded-note {
-      color: #ff9999;
-    }
-    .invalid-note {
       color: #ffff99;
     }
     #version-message {
@@ -109,13 +102,13 @@
 <body>
   <h1>ViewSort - Your Digital QSL Card Sorter</h1>
   <div class="input-container">
-    <input type="text" id="callsign-input" placeholder="Enter callsign...">
-    <button id="add-button" onclick="addCallsign()">Add QSL Card</button>
-    <button id="submit-button">Submit</button>
-    <button id="clear-button" onclick="clearCallsigns()">Clear All</button>
-    <button id="help-button" onclick="toggleHelpMessage()">Help</button>
-    <button id="generate-pdf-button" onclick="generatePDF()">Generate PDF</button>
-  </div>
+  <input type="text" id="callsign-input" placeholder="Enter callsign...">
+  <button id="add-button" onclick="addCallsign()">Add QSL Card</button>
+  <button id="submit-button">Submit</button>
+  <button id="generate-pdf-button" onclick="generatePDF()">Generate PDF</button>
+  <button id="help-button" onclick="toggleHelpMessage()">Help</button>
+  <button id="clear-button" onclick="clearCallsigns()">Clear All</button>
+</div>
   <div id="help-text" aria-live="polite"></div>
   <div id="callsign-list-input"></div>
   <div id="callsign-sorted-list-output"></div>
@@ -1228,7 +1221,6 @@ const prefixData = {
       "specialSorting": []
     }
   },
-  "excludedPrefixes": []
 }    // === Utilities ===
     const prefixUtils = {
       /**
@@ -1257,9 +1249,8 @@ const prefixData = {
        * @returns {boolean} True if valid, false otherwise.
        */
       isValidPrefix(prefix) {
-        return Object.values(prefixData.countries).some(c => c.prefixes.includes(prefix)) &&
-               !prefixData.excludedPrefixes.includes(prefix);
-      },
+  return Object.values(prefixData.countries).some(c => c.prefixes.includes(prefix));
+},
 
       /**
        * Checks if a country has a QSL sort service.
@@ -1456,28 +1447,23 @@ const prefixData = {
         sorted.forEach(({ callsign, number }) => {
           const prefix = extractPrefix(callsign);
           const country = prefixUtils.getCountryByPrefix(prefix);
-          const isExcluded = prefixData.excludedPrefixes.some(p => callsign.startsWith(p));
           const isNoQSL = country && !prefixUtils.hasQSLSortService(country);
-          const isUnknown = !prefixUtils.isValidPrefix(prefix) &&
-                            !prefixData.countries["United States"]?.specialSorting.some(a => callsign.startsWith(a)) &&
-                            !prefixData.countries["Japan"]?.specialSorting.some(a => callsign.startsWith(a));
+const isUnknown = !prefixUtils.isValidPrefix(prefix) &&
+                  !prefixData.countries["United States"]?.specialSorting.some(a => callsign.startsWith(a)) &&
+                  !prefixData.countries["Japan"]?.specialSorting.some(a => callsign.startsWith(a));
 
-          const div = document.createElement('div');
-          if (isExcluded) {
-            div.className = 'excluded';
-            div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-            div.innerHTML += `<span class="excluded-note">This QSL card cannot be sent via the bureau at this time. Please take it out and set it aside for later mailing.</span>`;
-          } else if (isNoQSL) {
-            div.className = 'invalid-output';
-            div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-            div.innerHTML += `<span class="invalid-note">This country has no national QSL service and cannot be sent via the bureau.</span>`;
-          } else if (isUnknown) {
-            div.className = 'invalid-output';
-            div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-            div.innerHTML += `<span class="invalid-note">Unknown prefix. Please verify the callsign.</span>`;
-          } else {
-            div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-          }
+const div = document.createElement('div');
+if (isNoQSL) {
+  div.className = 'invalid-output';
+  div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+  div.innerHTML += `<span class="invalid-note"> This card cannot be sent with the bureau. Please choose another Method or save this card for later mailing.</span>`;
+} else if (isUnknown) {
+  div.className = 'invalid-output';
+  div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+  div.innerHTML += `<span class="invalid-note">Unknown prefix. Please verify the callsign.</span>`;
+} else {
+  div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+}
           callsignSortedListOutput.appendChild(div);
         });
 
@@ -1607,7 +1593,7 @@ const prefixData = {
     // Initialize version message
     async function checkVersion() {
       try {
-        const CURRENT_VERSION = "GHv2.0";
+        const CURRENT_VERSION = "GHv2.1.0";
         const GITHUB_REPO = "rSignal86/ViewSort";
         const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`);
         if (!response.ok) throw new Error("Could not fetch version info");
