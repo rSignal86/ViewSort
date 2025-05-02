@@ -114,7 +114,7 @@
       "specialSorting": []
     },
     "Belgium": {
-      "prefixes": ["ON", "OP", "OQ", "OR", "OS", "OT"],
+      "prefixes": ["ON","OO", "OP", "OQ", "OR", "OS", "OT"],
       "displayIntervals": ["ON - OT"],
       "hasQSLSortService": true,
       "relatedTerritories": [],
