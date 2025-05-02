@@ -1,0 +1,1076 @@
+{
+  "version": "3.0.0",
+  "countries": {
+    "Albania": {
+      "prefixes": ["ZA"],
+      "displayIntervals": ["ZA"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Algeria": {
+      "prefixes": ["7T", "7U", "7V", "7W", "7X", "7Y"],
+      "displayIntervals": ["7T - 7Y"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Andorra": {
+      "prefixes": ["C3"],
+      "displayIntervals": ["C3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Angola": {
+      "prefixes": ["D2", "D3"],
+      "displayIntervals": ["D2 - D3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Antigua and Barbuda": {
+      "prefixes": ["V2"],
+      "displayIntervals": ["V2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Argentina": {
+      "prefixes": ["LU", "LW", "AY", "AZ", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"],
+      "displayIntervals": ["LU - LW", "AY - AZ", "L2 - L9"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Armenia": {
+      "prefixes": ["EK"],
+      "displayIntervals": ["EK"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Aruba": {
+      "prefixes": ["P4"],
+      "displayIntervals": ["P4"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Australia": {
+      "prefixes": ["VK", "AX", "VK9"],
+      "displayIntervals": ["VK", "AX", "VK9"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Christmas Island", "Cocos Islands", "Norfolk Island"],
+      "specialSorting": ["VK1", "VK2", "VK3", "VK4", "VK5", "VK6", "VK7", "VK8", "VK9"]
+    },
+    "Austria": {
+      "prefixes": ["OE"],
+      "displayIntervals": ["OE"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Azerbaijan": {
+      "prefixes": ["4J", "4K"],
+      "displayIntervals": ["4J - 4K"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bahamas": {
+      "prefixes": ["C6"],
+      "displayIntervals": ["C6"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bahrain": {
+      "prefixes": ["A9"],
+      "displayIntervals": ["A9"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bangladesh": {
+      "prefixes": ["S2", "S3"],
+      "displayIntervals": ["S2 - S3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Barbados": {
+      "prefixes": ["8P"],
+      "displayIntervals": ["8P"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Belarus": {
+      "prefixes": ["EU", "EV", "EW"],
+      "displayIntervals": ["EU - EW"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Belgium": {
+      "prefixes": ["ON", "OP", "OQ", "OR", "OS", "OT"],
+      "displayIntervals": ["ON - OT"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Belize": {
+      "prefixes": ["V3"],
+      "displayIntervals": ["V3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Benin": {
+      "prefixes": ["TY"],
+      "displayIntervals": ["TY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bermuda": {
+      "prefixes": ["VP9"],
+      "displayIntervals": ["VP9"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bhutan": {
+      "prefixes": ["A5"],
+      "displayIntervals": ["A5"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bolivia": {
+      "prefixes": ["CP"],
+      "displayIntervals": ["CP"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bosnia and Herzegovina": {
+      "prefixes": ["E7"],
+      "displayIntervals": ["E7"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Botswana": {
+      "prefixes": ["A2"],
+      "displayIntervals": ["A2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Brazil": {
+      "prefixes": ["PP", "PQ", "PR", "PS", "PT", "PU", "PV", "PW", "PX", "PY", "ZB", "ZC", "ZD", "ZE", "ZF", "ZG", "ZH", "ZI", "ZJ", "ZK", "ZL", "ZM", "ZN", "ZO", "ZP", "ZQ", "ZR", "ZS", "ZT", "ZU", "ZV", "ZW", "ZX", "ZY", "ZZ"],
+      "displayIntervals": ["PP - PY", "ZB - ZZ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Brunei": {
+      "prefixes": ["V8"],
+      "displayIntervals": ["V8"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Bulgaria": {
+      "prefixes": ["LZ"],
+      "displayIntervals": ["LZ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Burkina Faso": {
+      "prefixes": ["XT"],
+      "displayIntervals": ["XT"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Burundi": {
+      "prefixes": ["G8"],
+      "displayIntervals": ["G8"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Cameroon": {
+      "prefixes": ["TJ"],
+      "displayIntervals": ["TJ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Canada": {
+      "prefixes": ["VE", "VA", "VB", "VC", "VD", "VG", "VO", "VY"],
+      "displayIntervals": ["VA - VY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Newfoundland", "Yukon"],
+      "specialSorting": ["VE1", "VE2", "VE3", "VE4", "VE5", "VE6", "VE7", "VE8", "VE9", "VO1", "VO2", "VY0", "VY1", "VY2"]
+    },
+    "Cape Verde": {
+      "prefixes": ["D4"],
+      "displayIntervals": ["D4"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Cayman Islands": {
+      "prefixes": ["ZF"],
+      "displayIntervals": ["ZF"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Chad": {
+      "prefixes": ["TT"],
+      "displayIntervals": ["TT"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Chile": {
+      "prefixes": ["CA", "CB", "CC", "CD", "CE", "XQ", "XR", "CE0"],
+      "displayIntervals": ["CA - CE", "XQ - XR", "CE0"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Easter Island", "Juan Fernandez"],
+      "specialSorting": []
+    },
+    "China": {
+      "prefixes": ["B", "BA", "BB", "BC", "BD", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY"],
+      "displayIntervals": ["B", "BA - BY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Colombia": {
+      "prefixes": ["HK", "HJ", "HK0"],
+      "displayIntervals": ["HJ - HK", "HK0"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["San Andres"],
+      "specialSorting": []
+    },
+    "Costa Rica": {
+      "prefixes": ["TI", "TE"],
+      "displayIntervals": ["TI - TE"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Croatia": {
+      "prefixes": ["9A"],
+      "displayIntervals": ["9A"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Cuba": {
+      "prefixes": ["CM", "CO", "CL"],
+      "displayIntervals": ["CL - CM"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Cyprus": {
+      "prefixes": ["5B", "C4", "H2"],
+      "displayIntervals": ["5B", "C4", "H2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Czech Republic": {
+      "prefixes": ["OK", "OL"],
+      "displayIntervals": ["OK - OL"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Denmark": {
+      "prefixes": ["OZ", "OU", "OV", "OY", "OX"],
+      "displayIntervals": ["OU - OZ", "OY", "OX"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Faroe Islands", "Greenland"],
+      "specialSorting": []
+    },
+    "Djibouti": {
+      "prefixes": ["J2"],
+      "displayIntervals": ["J2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Dominican Republic": {
+      "prefixes": ["HI"],
+      "displayIntervals": ["HI"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Ecuador": {
+      "prefixes": ["HC", "HD", "HC8"],
+      "displayIntervals": ["HC - HD", "HC8"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Galapagos Islands"],
+      "specialSorting": []
+    },
+    "Egypt": {
+      "prefixes": ["SU"],
+      "displayIntervals": ["SU"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "El Salvador": {
+      "prefixes": ["YS", "HU"],
+      "displayIntervals": ["YS", "HU"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Eritrea": {
+      "prefixes": ["E3"],
+      "displayIntervals": ["E3"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Estonia": {
+      "prefixes": ["ES"],
+      "displayIntervals": ["ES"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Ethiopia": {
+      "prefixes": ["ET"],
+      "displayIntervals": ["ET"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Fiji": {
+      "prefixes": ["3D2"],
+      "displayIntervals": ["3D2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Finland": {
+      "prefixes": ["OH", "OI", "OJ", "OH0"],
+      "displayIntervals": ["OH - OJ", "OH0"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Aland Islands"],
+      "specialSorting": []
+    },
+    "France": {
+      "prefixes": ["F", "FA", "FB", "FC", "FD", "FE", "FF", "FG", "FH", "FI", "FJ", "FK", "FL", "FM", "FN", "FO", "FP", "FQ", "FR", "FS", "FT", "FU", "FV", "FW", "FX", "FY", "TM", "HW", "HX", "HY"],
+      "displayIntervals": ["F", "FA - FY", "TM", "HW - HY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Guadeloupe", "Martinique", "Reunion"],
+      "specialSorting": []
+    },
+    "Gabon": {
+      "prefixes": ["TR"],
+      "displayIntervals": ["TR"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Georgia": {
+      "prefixes": ["4L"],
+      "displayIntervals": ["4L"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Germany": {
+      "prefixes": ["DA", "DB", "DC", "DD", "DE", "DF", "DG", "DH", "DI", "DJ", "DK", "DL", "DM", "DN", "DO", "DP", "DQ", "DR"],
+      "displayIntervals": ["DA - DR"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Ghana": {
+      "prefixes": ["9G"],
+      "displayIntervals": ["9G"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Greece": {
+      "prefixes": ["SV", "SW", "SX", "SY", "SZ", "J4"],
+      "displayIntervals": ["SV - SZ", "J4"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Crete"],
+      "specialSorting": []
+    },
+    "Grenada": {
+      "prefixes": ["J3"],
+      "displayIntervals": ["J3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Guatemala": {
+      "prefixes": ["TG", "TD"],
+      "displayIntervals": ["TD - TG"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Guinea": {
+      "prefixes": ["3X"],
+      "displayIntervals": ["3X"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Haiti": {
+      "prefixes": ["HH"],
+      "displayIntervals": ["HH"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Honduras": {
+      "prefixes": ["HR", "HQ"],
+      "displayIntervals": ["HQ - HR"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Hungary": {
+      "prefixes": ["HA", "HG"],
+      "displayIntervals": ["HA - HG"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Iceland": {
+      "prefixes": ["TF"],
+      "displayIntervals": ["TF"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "India": {
+      "prefixes": ["VU", "AT", "VU4", "VU7"],
+      "displayIntervals": ["VU", "AT", "VU4", "VU7"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Andaman and Nicobar", "Lakshadweep"],
+      "specialSorting": []
+    },
+    "Indonesia": {
+      "prefixes": ["YB", "YC", "YD", "YE", "PK", "PL", "PM", "PN", "PO"],
+      "displayIntervals": ["YB - YE", "PK - PO"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Iran": {
+      "prefixes": ["EP", "EQ"],
+      "displayIntervals": ["EP - EQ"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Iraq": {
+      "prefixes": ["YI"],
+      "displayIntervals": ["YI"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Ireland": {
+      "prefixes": ["EI", "EJ"],
+      "displayIntervals": ["EI - EJ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Israel": {
+      "prefixes": ["4X", "4Z"],
+      "displayIntervals": ["4X - 4Z"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Italy": {
+      "prefixes": ["I", "IA", "IB", "IC", "ID", "IE", "IF", "IG", "IH", "II", "IJ", "IK", "IL", "IM", "IN", "IO", "IP", "IQ", "IR", "IS", "IT", "IU", "IV", "IW", "IX", "IY", "IZ"],
+      "displayIntervals": ["I", "IA - IZ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Sardinia"],
+      "specialSorting": []
+    },
+    "Jamaica": {
+      "prefixes": ["6Y"],
+      "displayIntervals": ["6Y"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Japan": {
+      "prefixes": ["JA", "JB", "JC", "JD1", "JE", "JF", "JG", "JH", "JI", "JJ", "JK", "JL", "JM", "JN", "JO", "JP", "JQ", "JR", "JS", "7J", "7K", "7L", "7M", "7N", "8J", "8K", "8L", "8M", "8N"],
+      "displayIntervals": ["JA - JS", "7J - 7N", "8J - 8N"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Ogasawara"],
+      "specialSorting": ["JA0", "JA1", "JA2", "JA3", "JA4", "JA5", "JA6", "JA7", "JA8", "JA9"]
+    },
+    "Jordan": {
+      "prefixes": ["JY"],
+      "displayIntervals": ["JY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Kazakhstan": {
+      "prefixes": ["UN", "UO", "UP", "UQ"],
+      "displayIntervals": ["UN - UQ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Kenya": {
+      "prefixes": ["5Z"],
+      "displayIntervals": ["5Z"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Kuwait": {
+      "prefixes": ["9K"],
+      "displayIntervals": ["9K"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Kyrgyzstan": {
+      "prefixes": ["EX"],
+      "displayIntervals": ["EX"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Latvia": {
+      "prefixes": ["YL"],
+      "displayIntervals": ["YL"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Lebanon": {
+      "prefixes": ["OD"],
+      "displayIntervals": ["OD"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Liberia": {
+      "prefixes": ["EL"],
+      "displayIntervals": ["EL"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Libya": {
+      "prefixes": ["5A"],
+      "displayIntervals": ["5A"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Lithuania": {
+      "prefixes": ["LY"],
+      "displayIntervals": ["LY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Luxembourg": {
+      "prefixes": ["LX"],
+      "displayIntervals": ["LX"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Madagascar": {
+      "prefixes": ["5R", "5S"],
+      "displayIntervals": ["5R - 5S"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Malaysia": {
+      "prefixes": ["9M", "9W"],
+      "displayIntervals": ["9M - 9W"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["East Malaysia"],
+      "specialSorting": []
+    },
+    "Maldives": {
+      "prefixes": ["8Q"],
+      "displayIntervals": ["8Q"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Mali": {
+      "prefixes": ["TZ"],
+      "displayIntervals": ["TZ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Malta": {
+      "prefixes": ["9H"],
+      "displayIntervals": ["9H"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Mauritania": {
+      "prefixes": ["5T"],
+      "displayIntervals": ["5T"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Mexico": {
+      "prefixes": ["XE", "XA", "XB", "XC", "XD", "XF", "XG", "XH", "XI"],
+      "displayIntervals": ["XA - XI"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Monaco": {
+      "prefixes": ["3A"],
+      "displayIntervals": ["3A"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Mongolia": {
+      "prefixes": ["JT", "JU"],
+      "displayIntervals": ["JT - JU"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Montenegro": {
+      "prefixes": ["4O"],
+      "displayIntervals": ["4O"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Morocco": {
+      "prefixes": ["CN"],
+      "displayIntervals": ["CN"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Mozambique": {
+      "prefixes": ["C8", "C9"],
+      "displayIntervals": ["C8 - C9"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Namibia": {
+      "prefixes": ["V5"],
+      "displayIntervals": ["V5"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Nauru": {
+      "prefixes": ["C2"],
+      "displayIntervals": ["C2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Nepal": {
+      "prefixes": ["9N"],
+      "displayIntervals": ["9N"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Netherlands": {
+      "prefixes": ["PA", "PB", "PC", "PD", "PE", "PF", "PG", "PH", "PI", "PJ2"],
+      "displayIntervals": ["PA - PI", "PJ2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Aruba", "Curacao"],
+      "specialSorting": []
+    },
+    "New Zealand": {
+      "prefixes": ["ZL", "ZM", "ZL7"],
+      "displayIntervals": ["ZL - ZM", "ZL7"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Chatham Islands"],
+      "specialSorting": []
+    },
+    "Niger": {
+      "prefixes": ["5U"],
+      "displayIntervals": ["5U"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Nigeria": {
+      "prefixes": ["5N"],
+      "displayIntervals": ["5N"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "North Korea - DPRK": {
+      "prefixes": ["P5"],
+      "displayIntervals": ["P5"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Norway": {
+      "prefixes": ["3Y", "LA", "LB", "LC", "LD", "LE", "LF", "LG", "LH", "LI", "LJ", "LK", "LL", "LM", "LN", "JW", "JX"],
+      "displayIntervals": ["LA - LN", "JW - JX", "3Y"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Svalbard", "Jan Mayen", "Bouvet Island"],
+      "specialSorting": []
+    },
+    "Oman": {
+      "prefixes": ["A4"],
+      "displayIntervals": ["A4"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Pakistan": {
+      "prefixes": ["AP", "AQ", "AR", "AS"],
+      "displayIntervals": ["AP - AS"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Panama": {
+      "prefixes": ["HP", "HO"],
+      "displayIntervals": ["HP - HO"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Papua New Guinea": {
+      "prefixes": ["P2"],
+      "displayIntervals": ["P2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Paraguay": {
+      "prefixes": ["ZP"],
+      "displayIntervals": ["ZP"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Peru": {
+      "prefixes": ["OA", "OB"],
+      "displayIntervals": ["OA - OB"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Philippines": {
+      "prefixes": ["DU", "DV", "DW", "DX", "DY", "DZ", "4D", "4E", "4F", "4G", "4H", "4I"],
+      "displayIntervals": ["DU - DZ", "4D - 4I"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Poland": {
+      "prefixes": ["SP", "SQ", "SR", "HF", "SN"],
+      "displayIntervals": ["SP - SR", "HF", "SN"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Portugal": {
+      "prefixes": ["CT", "CQ", "CR", "CS", "CU", "CT3"],
+      "displayIntervals": ["CQ - CU", "CT3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Azores", "Madeira"],
+      "specialSorting": []
+    },
+    "Qatar": {
+      "prefixes": ["A7"],
+      "displayIntervals": ["A7"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Romania": {
+      "prefixes": ["YO", "YP", "YQ", "YR"],
+      "displayIntervals": ["YO - YR"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Russia": {
+      "prefixes": ["R", "RA", "RB", "RC", "RD", "RE", "RF", "RG", "RH", "RI", "RJ", "RK", "RL", "RM", "RN", "RO", "RP", "RQ", "RR", "RS", "RT", "RU", "RV", "RW", "RX", "RY", "RZ", "UA", "UB", "UC", "UD", "UE", "UF", "UG", "UH", "UI"],
+      "displayIntervals": ["R", "RA - RZ", "UA - UI"],
+      "hasQSLSortService": false,
+      "relatedTerritories": ["Kaliningrad"],
+      "specialSorting": []
+    },
+    "San Marino": {
+      "prefixes": ["T7"],
+      "displayIntervals": ["T7"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Saudi Arabia": {
+      "prefixes": ["HZ"],
+      "displayIntervals": ["HZ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Serbia": {
+      "prefixes": ["YT", "YU"],
+      "displayIntervals": ["YT - YU"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Seychelles": {
+      "prefixes": ["S7"],
+      "displayIntervals": ["S7"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Singapore": {
+      "prefixes": ["9V"],
+      "displayIntervals": ["9V"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Slovakia": {
+      "prefixes": ["OM"],
+      "displayIntervals": ["OM"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Slovenia": {
+      "prefixes": ["S5"],
+      "displayIntervals": ["S5"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Somalia": {
+      "prefixes": ["T5", "6O"],
+      "displayIntervals": ["T5", "6O"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "South Africa": {
+      "prefixes": ["ZR", "ZS", "ZT"],
+      "displayIntervals": ["ZR - ZT"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "South Korea": {
+      "prefixes": ["HL", "DS", "DT"],
+      "displayIntervals": ["HL", "DS - DT"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Spain": {
+      "prefixes": ["EA", "EB", "EC", "ED", "EE", "EF", "EG", "EH", "AM", "AN", "AO"],
+      "displayIntervals": ["EA - EH", "AM - AO"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Balearic Islands", "Canary Islands", "Ceuta"],
+      "specialSorting": []
+    },
+    "Sri Lanka": {
+      "prefixes": ["4P", "4Q", "4R", "4S"],
+      "displayIntervals": ["4P - 4S"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Sudan": {
+      "prefixes": ["ST"],
+      "displayIntervals": ["ST"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Sweden": {
+      "prefixes": ["SA", "SB", "SC", "SD", "SE", "SF", "SG", "SH", "SI", "SJ", "SK", "SL", "SM"],
+      "displayIntervals": ["SA - SM"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Switzerland": {
+      "prefixes": ["HB", "HE"],
+      "displayIntervals": ["HB - HE"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Syria": {
+      "prefixes": ["YK"],
+      "displayIntervals": ["YK"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Tajikistan": {
+      "prefixes": ["EY"],
+      "displayIntervals": ["EY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Tanzania": {
+      "prefixes": ["5H", "5I"],
+      "displayIntervals": ["5H - 5I"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Thailand": {
+      "prefixes": ["HS", "E2"],
+      "displayIntervals": ["HS", "E2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Togo": {
+      "prefixes": ["5V"],
+      "displayIntervals": ["5V"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Tonga": {
+      "prefixes": ["A3"],
+      "displayIntervals": ["A3"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Tunisia": {
+      "prefixes": ["3V"],
+      "displayIntervals": ["3V"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Turkey": {
+      "prefixes": ["TA", "TB", "TC", "YM"],
+      "displayIntervals": ["TA - TC", "YM"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Turkmenistan": {
+      "prefixes": ["EZ"],
+      "displayIntervals": ["EZ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Uganda": {
+      "prefixes": ["5X"],
+      "displayIntervals": ["5X"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Ukraine": {
+      "prefixes": ["UR", "US", "UT", "UU", "UV", "UW", "UX", "UY", "UZ", "EM", "EN", "EO"],
+      "displayIntervals": ["UR - UZ", "EM - EO"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "United Kingdom": {
+      "prefixes": ["G", "M", "2E", "2I", "2J", "2M", "2U", "2W", "GM", "GW", "GI", "GU", "GJ", "GD"],
+      "displayIntervals": ["G", "M", "2E - 2W", "GM", "GW", "GI", "GU", "GJ", "GD"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Scotland", "Wales", "Northern Ireland", "Guernsey", "Jersey", "Isle of Man"],
+      "specialSorting": []
+    },
+    "United States": {
+      "prefixes": ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AI", "AJ", "AK", "AL", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "K", "KA", "KB", "KC", "KD", "KE", "KF", "KG", "KH", "KI", "KJ", "KK", "KL", "KM", "KN", "KO", "KP", "KQ", "KR", "KS", "KT", "KU", "KV", "KW", "KX", "KY", "KZ", "N", "NA", "NB", "NC", "ND", "NE", "NF", "NG", "NH", "NI", "NJ", "NK", "NL", "NM", "NN", "NO", "NP", "NQ", "NR", "NS", "NT", "NU", "NV", "NW", "NX", "NY", "NZ", "W", "KL7", "KH6", "KP4", "KH2", "KH8", "KP2"],
+      "displayIntervals": ["AA - AZ", "K", "N", "W", "KL7", "KH6", "KP4", "KH2", "KH8", "KP2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": ["Alaska", "Hawaii", "Guam", "Puerto Rico", "American Samoa", "Virgin Islands"],
+      "specialSorting": ["W0", "W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "K0", "K1", "K2", "K3", "K4", "K5", "K6", "K7", "K8", "K9", "N0", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9", "KH6", "KL7", "KP4"]
+    },
+    "Uzbekistan": {
+      "prefixes": ["UJ", "UK", "UL", "UM"],
+      "displayIntervals": ["UJ - UM"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Vanuatu": {
+      "prefixes": ["YJ"],
+      "displayIntervals": ["YJ"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Venezuela": {
+      "prefixes": ["YV", "YW", "YX", "YY"],
+      "displayIntervals": ["YV - YY"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Yemen": {
+      "prefixes": ["7O"],
+      "displayIntervals": ["7O"],
+      "hasQSLSortService": false,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Zambia": {
+      "prefixes": ["9I", "9J"],
+      "displayIntervals": ["9I - 9J"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    },
+    "Zimbabwe": {
+      "prefixes": ["Z2"],
+      "displayIntervals": ["Z2"],
+      "hasQSLSortService": true,
+      "relatedTerritories": [],
+      "specialSorting": []
+    }
+  }
+}
