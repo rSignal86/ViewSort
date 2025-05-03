@@ -77,9 +77,12 @@ You can safely use it for personal use, clubs, or events without compromising an
   - Improved structure and maintainability
   - Accessibility and privacy improvements
 - **GHv2.1.0**
-  - Cleaning code
-  - Switch position on some button to have it in a more logic order.
-  - Have all countries you cannot send QSL cards to via bureau in one category to avoid political discrimination.
+  - Code cleanup
+  - Repositioned buttons for better logic flow
+  - Merged unsupported countries into a shared category to avoid political discrimination
+- **GHv3.0.0**
+  - Prefixes are now stored in an external JSON file for easier maintenance and updates
+  - Added more shortcut keys to various buttons for improved usability
 
 ---
 
