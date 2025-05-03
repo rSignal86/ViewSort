@@ -1,1618 +1,688 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ViewSort - Your Digital QSL Card Sorter</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body {
-      background-color: black;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 2em;
-    }
-    .input-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input[type="text"] {
-      padding: 12px;
-      font-size: 18px;
-      width: 300px;
-      border-radius: 4px;
-      border: 1px solid #555;
-      background-color: #222;
-      color: white;
-      text-transform: uppercase;
-      font-family: Inconsolata, monospace;
-      font-feature-settings: "zero";
-    }
-    button {
-      padding: 12px 20px;
-      font-size: 18px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #add-button {
-      background-color: #28a745;
-      color: white;
-    }
-    #submit-button {
-      background-color: #007bff;
-      color: white;
-    }
-    #clear-button {
-      background-color: #dc3545;
-      color: white;
-      margin-left: 30px;
-    }
-    #help-button {
-      background-color: #ffc107;
-      color: black;
-    }
-    #generate-pdf-button {
-      background-color: #17a2b8;
-      color: white;
-      display: none;
-    }
-    #callsign-list-input div, #callsign-sorted-list-output div {
-      margin: 6px;
-      padding: 6px;
-      font-size: 20px;
-      font-family: Inconsolata, monospace;
-      font-feature-settings: "zero";
-    }
-    .invalid-output {
-      color: yellow;
-    }
-    .invalid-note {
-      font-size: 14px;
-      display: inline-block;
-      margin-left: 10px;
-      color: #ffff99;
-    }
-    #version-message {
-      margin-top: 20px;
-      font-size: 16px;
-      color: yellow;
-    }
-    #help-text {
-      display: none;
-      margin: 20px auto;
-      max-width: 600px;
-      font-size: 16px;
-      text-align: left;
-    }
-    #help-text p {
-      margin: 10px 0;
-    }
-    #callsign-sorted-list-output {
-      display: block;
-      visibility: visible;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViewSort - Your Digital QSL Card Sorter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 2em;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .primary-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .secondary-buttons {
+            display: flex;
+            gap: 5px;
+            margin-left: 20px;
+        }
+        input[type="text"] {
+            padding: 12px;
+            font-size: 18px;
+            width: 300px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: #222;
+            color: white;
+            text-transform: uppercase;
+            font-family: Inconsolata, monospace;
+            font-feature-settings: "zero";
+        }
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #add-button {
+            background-color: #28a745;
+            color: white;
+        }
+        #sort-button {
+            background-color: #007bff;
+            color: white;
+        }
+        #clear-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        #help-button {
+            background-color: #ffc107;
+            color: black;
+        }
+        #refresh-button {
+            background-color: #6c757d;
+            color: white;
+        }
+        #generate-pdf-button {
+            background-color: #17a2b8;
+            color: white;
+            display: none;
+        }
+        #callsign-list-input div, #callsign-sorted-list-output div {
+            margin: 6px;
+            padding: 6px;
+            font-size: 20px;
+            font-family: Inconsolata, monospace;
+            font-feature-settings: "zero";
+        }
+        .invalid-output {
+            color: yellow;
+        }
+        .invalid-note {
+            font-size: 14px;
+            display: inline-block;
+            margin-left: 10px;
+            color: #ffff99;
+        }
+        #version-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: yellow;
+        }
+        #help-text {
+            display: none;
+            margin: 20px auto;
+            max-width: 600px;
+            font-size: 16px;
+            text-align: left;
+        }
+        #help-text p {
+            margin: 10px 0;
+        }
+        #callsign-sorted-list-output {
+            display: block;
+            visibility: visible;
+        }
+        .loading-indicator {
+            display: none;
+            font-size: 14px;
+            color: #ccc;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
-  <h1>ViewSort - Your Digital QSL Card Sorter</h1>
-  <div class="input-container">
-  <input type="text" id="callsign-input" placeholder="Enter callsign...">
-  <button id="add-button" onclick="addCallsign()">Add QSL Card</button>
-  <button id="submit-button">Submit</button>
-  <button id="generate-pdf-button" onclick="generatePDF()">Generate PDF</button>
-  <button id="help-button" onclick="toggleHelpMessage()">Help</button>
-  <button id="clear-button" onclick="clearCallsigns()">Clear All</button>
-</div>
-  <div id="help-text" aria-live="polite"></div>
-  <div id="callsign-list-input"></div>
-  <div id="callsign-sorted-list-output"></div>
-  <div id="version-message"></div>
+    <h1>ViewSort - Your Digital QSL Card Sorter</h1>
+    <div class="input-container">
+        <input type="text" id="callsign-input" placeholder="Enter callsign...">
+        <div class="primary-buttons">
+            <button id="add-button" onclick="addCallsign()">Add QSL Card [ENTER]</button>
+            <button id="sort-button" onclick="displaySortedCallsigns()">Start Sorting [SPACE]</button>
+            <button id="generate-pdf-button" onclick="generatePDF()">Generate PDF [F10]</button>
+            <button id="help-button" onclick="toggleHelpMessage()">Help [F9]</button>
+        </div>
+        <div class="secondary-buttons">
+            <button id="refresh-button" onclick="loadPrefixData()">Refresh Data</button>
+            <button id="clear-button" onclick="clearCallsigns()">Clear All</button>
+        </div>
+        <span class="loading-indicator" id="loading-indicator">Loading data...</span>
+    </div>
+    <div id="help-text" aria-live="polite"></div>
+    <div id="callsign-list-input"></div>
+    <div id="callsign-sorted-list-output"></div>
+    <div id="version-message"></div>
 
-  <script>
-    // === DOM Elements ===
-    const callsignInput = document.getElementById('callsign-input');
-    const callsignListInput = document.getElementById('callsign-list-input');
-    const callsignSortedListOutput = document.getElementById('callsign-sorted-list-output');
-    const versionMessage = document.getElementById('version-message');
-    const helpText = document.getElementById('help-text');
-    const generatePdfButton = document.getElementById('generate-pdf-button');
-    const submitButton = document.getElementById('submit-button');
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // === DOM Elements ===
+        const callsignInput = document.getElementById('callsign-input');
+        const callsignListInput = document.getElementById('callsign-list-input');
+        const callsignSortedListOutput = document.getElementById('callsign-sorted-list-output');
+        const versionMessage = document.getElementById('version-message');
+        const helpText = document.getElementById('help-text');
+        const generatePdfButton = document.getElementById('generate-pdf-button');
+        const sortButton = document.getElementById('sort-button');
+        const refreshButton = document.getElementById('refresh-button');
+        const clearButton = document.getElementById('clear-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
 
-    // Verify DOM elements with detailed logging
-    const missingElements = [];
-    if (!callsignInput) missingElements.push('callsign-input');
-    if (!callsignListInput) missingElements.push('callsign-list-input');
-    if (!callsignSortedListOutput) missingElements.push('callsign-sorted-list-output');
-    if (!versionMessage) missingElements.push('version-message');
-    if (!helpText) missingElements.push('help-text');
-    if (!generatePdfButton) missingElements.push('generate-pdf-button');
-    if (!submitButton) missingElements.push('submit-button');
+        // Verify DOM elements
+        const missingElements = [];
+        if (!callsignInput) missingElements.push('callsign-input');
+        if (!callsignListInput) missingElements.push('callsign-list-input');
+        if (!callsignSortedListOutput) missingElements.push('callsign-sorted-list-output');
+        if (!versionMessage) missingElements.push('version-message');
+        if (!helpText) missingElements.push('help-text');
+        if (!generatePdfButton) missingElements.push('generate-pdf-button');
+        if (!sortButton) missingElements.push('sort-button');
+        if (!refreshButton) missingElements.push('refresh-button');
+        if (!clearButton) missingElements.push('clear-button');
+        if (!loadingIndicator) missingElements.push('loading-indicator');
 
-    if (missingElements.length > 0) {
-      console.error('Missing DOM elements:', missingElements);
-      throw new Error(`Required DOM elements not found: ${missingElements.join(', ')}`);
-    }
-
-    // === Application State ===
-    let callsigns = [];
-    let counter = 0;
-    let isHelpVisible = false;
-    let isSorted = false;
-
-    // === Configuration ===
-const prefixData = {
-  "countries": {
-    "Albania": {
-      "prefixes": ["ZA"],
-      "displayIntervals": ["ZA"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Andorra": {
-      "prefixes": ["C3"],
-      "displayIntervals": ["C3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Angola": {
-      "prefixes": ["D2", "D3"],
-      "displayIntervals": ["D2 - D3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Antigua and Barbuda": {
-      "prefixes": ["V2"],
-      "displayIntervals": ["V2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Argentina": {
-      "prefixes": ["LU", "LW", "AY", "AZ", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"],
-      "displayIntervals": ["LU - LW", "AY - AZ", "L2 - L9"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Armenia": {
-      "prefixes": ["EK"],
-      "displayIntervals": ["EK"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Aruba": {
-      "prefixes": ["P4"],
-      "displayIntervals": ["P4"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Australia": {
-      "prefixes": ["VK", "AX", "VK9"],
-      "displayIntervals": ["VK", "AX", "VK9"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Christmas Island", "Cocos Islands", "Norfolk Island"],
-      "specialSorting": ["VK1", "VK2", "VK3", "VK4", "VK5", "VK6", "VK7", "VK8", "VK9"]
-    },
-    "Austria": {
-      "prefixes": ["OE"],
-      "displayIntervals": ["OE"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bahamas": {
-      "prefixes": ["C6"],
-      "displayIntervals": ["C6"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bahrain": {
-      "prefixes": ["A9"],
-      "displayIntervals": ["A9"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Barbados": {
-      "prefixes": ["8P"],
-      "displayIntervals": ["8P"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Belarus": {
-      "prefixes": ["EU", "EV", "EW"],
-      "displayIntervals": ["EU - EW"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Belgium": {
-      "prefixes": ["ON", "OP", "OQ", "OR", "OS", "OT"],
-      "displayIntervals": ["ON - OT"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Belize": {
-      "prefixes": ["V3"],
-      "displayIntervals": ["V3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Benin": {
-      "prefixes": ["TY"],
-      "displayIntervals": ["TY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bermuda": {
-      "prefixes": ["VP9"],
-      "displayIntervals": ["VP9"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bhutan": {
-      "prefixes": ["A5"],
-      "displayIntervals": ["A5"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bolivia": {
-      "prefixes": ["CP"],
-      "displayIntervals": ["CP"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bosnia and Herzegovina": {
-      "prefixes": ["E7"],
-      "displayIntervals": ["E7"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Botswana": {
-      "prefixes": ["A2"],
-      "displayIntervals": ["A2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Brazil": {
-      "prefixes": ["PP", "PQ", "PR", "PS", "PT", "PU", "PV", "PW", "PX", "PY", "ZB", "ZC", "ZD", "ZE", "ZF", "ZG", "ZH", "ZI", "ZJ", "ZK", "ZL", "ZM", "ZN", "ZO", "ZP", "ZQ", "ZR", "ZS", "ZT", "ZU", "ZV", "ZW", "ZX", "ZY", "ZZ"],
-      "displayIntervals": ["PP - PY", "ZB - ZZ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Brunei": {
-      "prefixes": ["V8"],
-      "displayIntervals": ["V8"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bulgaria": {
-      "prefixes": ["LZ"],
-      "displayIntervals": ["LZ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Burkina Faso": {
-      "prefixes": ["XT"],
-      "displayIntervals": ["XT"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Cameroon": {
-      "prefixes": ["TJ"],
-      "displayIntervals": ["TJ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Canada": {
-      "prefixes": ["VE", "VA", "VB", "VC", "VD", "VG", "VO", "VY"],
-      "displayIntervals": ["VA - VY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Newfoundland", "Yukon"],
-      "specialSorting": ["VE1", "VE2", "VE3", "VE4", "VE5", "VE6", "VE7", "VE8", "VE9", "VO1", "VO2", "VY0", "VY1", "VY2"]
-    },
-    "Cape Verde": {
-      "prefixes": ["D4"],
-      "displayIntervals": ["D4"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Cayman Islands": {
-      "prefixes": ["ZF"],
-      "displayIntervals": ["ZF"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Chile": {
-      "prefixes": ["CA", "CB", "CC", "CD", "CE", "XQ", "XR", "CE0"],
-      "displayIntervals": ["CA - CE", "XQ - XR", "CE0"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Easter Island", "Juan Fernandez"],
-      "specialSorting": []
-    },
-    "China": {
-      "prefixes": ["B", "BA", "BB", "BC", "BD", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY"],
-      "displayIntervals": ["B", "BA - BY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Colombia": {
-      "prefixes": ["HK", "HJ", "HK0"],
-      "displayIntervals": ["HJ - HK", "HK0"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["San Andres"],
-      "specialSorting": []
-    },
-    "Costa Rica": {
-      "prefixes": ["TI", "TE"],
-      "displayIntervals": ["TI - TE"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Croatia": {
-      "prefixes": ["9A"],
-      "displayIntervals": ["9A"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Cuba": {
-      "prefixes": ["CM", "CO", "CL"],
-      "displayIntervals": ["CL - CM"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Cyprus": {
-      "prefixes": ["5B", "C4", "H2"],
-      "displayIntervals": ["5B", "C4", "H2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Czech Republic": {
-      "prefixes": ["OK", "OL"],
-      "displayIntervals": ["OK - OL"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Denmark": {
-      "prefixes": ["OZ", "OU", "OV", "OY", "OX"],
-      "displayIntervals": ["OU - OZ", "OY", "OX"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Faroe Islands", "Greenland"],
-      "specialSorting": []
-    },
-    "Dominican Republic": {
-      "prefixes": ["HI"],
-      "displayIntervals": ["HI"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Ecuador": {
-      "prefixes": ["HC", "HD", "HC8"],
-      "displayIntervals": ["HC - HD", "HC8"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Galapagos Islands"],
-      "specialSorting": []
-    },
-    "Egypt": {
-      "prefixes": ["SU"],
-      "displayIntervals": ["SU"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "El Salvador": {
-      "prefixes": ["YS", "HU"],
-      "displayIntervals": ["YS", "HU"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Estonia": {
-      "prefixes": ["ES"],
-      "displayIntervals": ["ES"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Ethiopia": {
-      "prefixes": ["ET"],
-      "displayIntervals": ["ET"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Fiji": {
-      "prefixes": ["3D2"],
-      "displayIntervals": ["3D2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Finland": {
-      "prefixes": ["OH", "OI", "OJ", "OH0"],
-      "displayIntervals": ["OH - OJ", "OH0"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Aland Islands"],
-      "specialSorting": []
-    },
-    "France": {
-      "prefixes": ["F", "FA", "FB", "FC", "FD", "FE", "FF", "FG", "FH", "FI", "FJ", "FK", "FL", "FM", "FN", "FO", "FP", "FQ", "FR", "FS", "FT", "FU", "FV", "FW", "FX", "FY", "TM", "HW", "HX", "HY"],
-      "displayIntervals": ["F", "FA - FY", "TM", "HW - HY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Guadeloupe", "Martinique", "Reunion"],
-      "specialSorting": []
-    },
-    "Georgia": {
-      "prefixes": ["4L"],
-      "displayIntervals": ["4L"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Germany": {
-      "prefixes": ["DA", "DB", "DC", "DD", "DE", "DF", "DG", "DH", "DI", "DJ", "DK", "DL", "DM", "DN", "DO", "DP", "DQ", "DR"],
-      "displayIntervals": ["DA - DR"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Ghana": {
-      "prefixes": ["9G"],
-      "displayIntervals": ["9G"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Greece": {
-      "prefixes": ["SV", "SW", "SX", "SY", "SZ", "J4"],
-      "displayIntervals": ["SV - SZ", "J4"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Crete"],
-      "specialSorting": []
-    },
-    "Grenada": {
-      "prefixes": ["J3"],
-      "displayIntervals": ["J3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Guatemala": {
-      "prefixes": ["TG", "TD"],
-      "displayIntervals": ["TD - TG"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Haiti": {
-      "prefixes": ["HH"],
-      "displayIntervals": ["HH"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Honduras": {
-      "prefixes": ["HR", "HQ"],
-      "displayIntervals": ["HQ - HR"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Hungary": {
-      "prefixes": ["HA", "HG"],
-      "displayIntervals": ["HA - HG"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Iceland": {
-      "prefixes": ["TF"],
-      "displayIntervals": ["TF"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "India": {
-      "prefixes": ["VU", "AT", "VU4", "VU7"],
-      "displayIntervals": ["VU", "AT", "VU4", "VU7"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Andaman and Nicobar", "Lakshadweep"],
-      "specialSorting": []
-    },
-    "Indonesia": {
-      "prefixes": ["YB", "YC", "YD", "YE", "PK", "PL", "PM", "PN", "PO"],
-      "displayIntervals": ["YB - YE", "PK - PO"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Ireland": {
-      "prefixes": ["EI", "EJ"],
-      "displayIntervals": ["EI - EJ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Israel": {
-      "prefixes": ["4X", "4Z"],
-      "displayIntervals": ["4X - 4Z"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Italy": {
-      "prefixes": ["I", "IA", "IB", "IC", "ID", "IE", "IF", "IG", "IH", "II", "IJ", "IK", "IL", "IM", "IN", "IO", "IP", "IQ", "IR", "IS", "IT", "IU", "IV", "IW", "IX", "IY", "IZ"],
-      "displayIntervals": ["I", "IA - IZ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Sardinia"],
-      "specialSorting": []
-    },
-    "Jamaica": {
-      "prefixes": ["6Y"],
-      "displayIntervals": ["6Y"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Japan": {
-      "prefixes": ["JA", "JB", "JC", "JD1", "JE", "JF", "JG", "JH", "JI", "JJ", "JK", "JL", "JM", "JN", "JO", "JP", "JQ", "JR", "JS", "7J", "7K", "7L", "7M", "7N", "8J", "8K", "8L", "8M", "8N"],
-      "displayIntervals": ["JA - JS", "7J - 7N", "8J - 8N"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Ogasawara"],
-      "specialSorting": ["JA0", "JA1", "JA2", "JA3", "JA4", "JA5", "JA6", "JA7", "JA8", "JA9"]
-    },
-    "Jordan": {
-      "prefixes": ["JY"],
-      "displayIntervals": ["JY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Kenya": {
-      "prefixes": ["5Z"],
-      "displayIntervals": ["5Z"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Kuwait": {
-      "prefixes": ["9K"],
-      "displayIntervals": ["9K"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Latvia": {
-      "prefixes": ["YL"],
-      "displayIntervals": ["YL"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Lebanon": {
-      "prefixes": ["OD"],
-      "displayIntervals": ["OD"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Liberia": {
-      "prefixes": ["EL"],
-      "displayIntervals": ["EL"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Lithuania": {
-      "prefixes": ["LY"],
-      "displayIntervals": ["LY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Luxembourg": {
-      "prefixes": ["LX"],
-      "displayIntervals": ["LX"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Malaysia": {
-      "prefixes": ["9M", "9W"],
-      "displayIntervals": ["9M - 9W"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["East Malaysia"],
-      "specialSorting": []
-    },
-    "Malta": {
-      "prefixes": ["9H"],
-      "displayIntervals": ["9H"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Mexico": {
-      "prefixes": ["XE", "XA", "XB", "XC", "XD", "XF", "XG", "XH", "XI"],
-      "displayIntervals": ["XA - XI"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Morocco": {
-      "prefixes": ["CN"],
-      "displayIntervals": ["CN"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Netherlands": {
-      "prefixes": ["PA", "PB", "PC", "PD", "PE", "PF", "PG", "PH", "PI", "PJ2"],
-      "displayIntervals": ["PA - PI", "PJ2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Aruba", "Curacao"],
-      "specialSorting": []
-    },
-    "New Zealand": {
-      "prefixes": ["ZL", "ZM", "ZL7"],
-      "displayIntervals": ["ZL - ZM", "ZL7"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Chatham Islands"],
-      "specialSorting": []
-    },
-    "Nigeria": {
-      "prefixes": ["5N"],
-      "displayIntervals": ["5N"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Norway": {
-      "prefixes": ["3Y", "LA", "LB", "LC", "LD", "LE", "LF", "LG", "LH", "LI", "LJ", "LK", "LL", "LM", "LN", "JW", "JX"],
-      "displayIntervals": ["LA - LN", "JW - JX", "3Y"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Svalbard", "Jan Mayen", "Bouvet Island"],
-      "specialSorting": []
-    },
-    "Oman": {
-      "prefixes": ["A4"],
-      "displayIntervals": ["A4"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Panama": {
-      "prefixes": ["HP", "HO"],
-      "displayIntervals": ["HP - HO"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Paraguay": {
-      "prefixes": ["ZP"],
-      "displayIntervals": ["ZP"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Peru": {
-      "prefixes": ["OA", "OB"],
-      "displayIntervals": ["OA - OB"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Philippines": {
-      "prefixes": ["DU", "DV", "DW", "DX", "DY", "DZ", "4D", "4E", "4F", "4G", "4H", "4I"],
-      "displayIntervals": ["DU - DZ", "4D - 4I"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Poland": {
-      "prefixes": ["SP", "SQ", "SR", "HF", "SN"],
-      "displayIntervals": ["SP - SR", "HF", "SN"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Portugal": {
-      "prefixes": ["CT", "CQ", "CR", "CS", "CU", "CT3"],
-      "displayIntervals": ["CQ - CU", "CT3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Azores", "Madeira"],
-      "specialSorting": []
-    },
-    "Romania": {
-      "prefixes": ["YO", "YP", "YQ", "YR"],
-      "displayIntervals": ["YO - YR"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Russia": {
-      "prefixes": ["R", "RA", "RB", "RC", "RD", "RE", "RF", "RG", "RH", "RI", "RJ", "RK", "RL", "RM", "RN", "RO", "RP", "RQ", "RR", "RS", "RT", "RU", "RV", "RW", "RX", "RY", "RZ", "UA", "UB", "UC", "UD", "UE", "UF", "UG", "UH", "UI"],
-      "displayIntervals": ["R", "RA - RZ", "UA - UI"],
-      "hasQSLSortService": false,
-      "relatedTerritories": ["Kaliningrad"],
-      "specialSorting": []
-    },
-    "Serbia": {
-      "prefixes": ["YT", "YU"],
-      "displayIntervals": ["YT - YU"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Slovakia": {
-      "prefixes": ["OM"],
-      "displayIntervals": ["OM"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Slovenia": {
-      "prefixes": ["S5"],
-      "displayIntervals": ["S5"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "South Africa": {
-      "prefixes": ["ZR", "ZS", "ZT"],
-      "displayIntervals": ["ZR - ZT"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "South Korea": {
-      "prefixes": ["HL", "DS", "DT"],
-      "displayIntervals": ["HL", "DS - DT"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Spain": {
-      "prefixes": ["EA", "EB", "EC", "ED", "EE", "EF", "EG", "EH", "AM", "AN", "AO"],
-      "displayIntervals": ["EA - EH", "AM - AO"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Balearic Islands", "Canary Islands", "Ceuta"],
-      "specialSorting": []
-    },
-    "Sweden": {
-      "prefixes": ["SA", "SB", "SC", "SD", "SE", "SF", "SG", "SH", "SI", "SJ", "SK", "SL", "SM"],
-      "displayIntervals": ["SA - SM"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Switzerland": {
-      "prefixes": ["HB", "HE"],
-      "displayIntervals": ["HB - HE"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Thailand": {
-      "prefixes": ["HS", "E2"],
-      "displayIntervals": ["HS", "E2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Turkey": {
-      "prefixes": ["TA", "TB", "TC", "YM"],
-      "displayIntervals": ["TA - TC", "YM"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Ukraine": {
-      "prefixes": ["UR", "US", "UT", "UU", "UV", "UW", "UX", "UY", "UZ", "EM", "EN", "EO"],
-      "displayIntervals": ["UR - UZ", "EM - EO"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "United Kingdom": {
-      "prefixes": ["G", "M", "2E", "2I", "2J", "2M", "2U", "2W", "GM", "GW", "GI", "GU", "GJ", "GD"],
-      "displayIntervals": ["G", "M", "2E - 2W", "GM", "GW", "GI", "GU", "GJ", "GD"],
-      "hasQSLSortService": true,
-      "relatedTerritories": ["Scotland", "Wales", "Northern Ireland", "Guernsey", "Jersey", "Isle of Man"],
-      "specialSorting": []
-    },
-    "United States": {
-  "prefixes": ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AI", "AJ", "AK", "AL", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "K", "KA", "KB", "KC", "KD", "KE", "KF", "KG", "KH", "KI", "KJ", "KK", "KL", "KM", "KN", "KO", "KP", "KQ", "KR", "KS", "KT", "KU", "KV", "KW", "KX", "KY", "KZ", "N", "NA", "NB", "NC", "ND", "NE", "NF", "NG", "NH", "NI", "NJ", "NK", "NL", "NM", "NN", "NO", "NP", "NQ", "NR", "NS", "NT", "NU", "NV", "NW", "NX", "NY", "NZ", "W", "KL7", "KH6", "KP4", "KH2", "KH8", "KP2"],
-  "displayIntervals": ["AA - AZ", "K", "N", "W", "KL7", "KH6", "KP4", "KH2", "KH8", "KP2"],
-  "hasQSLSortService": true,
-  "relatedTerritories": ["Alaska", "Hawaii", "Guam", "Puerto Rico", "American Samoa", "Virgin Islands"],
-  "specialSorting": ["W0", "W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "K0", "K1", "K2", "K3", "K4", "K5", "K6", "K7", "K8", "K9", "N0", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9", "KH6", "KL7", "KP4"]
-},
-    // Nye manglende land, lagt til med relaterte territorier
-    "Algeria": {
-      "prefixes": ["7T", "7U", "7V", "7W", "7X", "7Y"],
-      "displayIntervals": ["7T - 7Y"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Azerbaijan": {
-      "prefixes": ["4J", "4K"],
-      "displayIntervals": ["4J - 4K"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Bangladesh": {
-      "prefixes": ["S2", "S3"],
-      "displayIntervals": ["S2 - S3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Burundi": {
-      "prefixes": ["G8"],
-      "displayIntervals": ["G8"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Djibouti": {
-      "prefixes": ["J2"],
-      "displayIntervals": ["J2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Eritrea": {
-      "prefixes": ["E3"],
-      "displayIntervals": ["E3"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Gabon": {
-      "prefixes": ["TR"],
-      "displayIntervals": ["TR"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Guinea": {
-      "prefixes": ["3X"],
-      "displayIntervals": ["3X"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Iran": {
-      "prefixes": ["EP", "EQ"],
-      "displayIntervals": ["EP - EQ"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Iraq": {
-      "prefixes": ["YI"],
-      "displayIntervals": ["YI"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Kazakhstan": {
-      "prefixes": ["UN", "UO", "UP", "UQ"],
-      "displayIntervals": ["UN - UQ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Kyrgyzstan": {
-      "prefixes": ["EX"],
-      "displayIntervals": ["EX"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Libya": {
-      "prefixes": ["5A"],
-      "displayIntervals": ["5A"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Madagascar": {
-      "prefixes": ["5R", "5S"],
-      "displayIntervals": ["5R - 5S"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Maldives": {
-      "prefixes": ["8Q"],
-      "displayIntervals": ["8Q"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Mali": {
-      "prefixes": ["TZ"],
-      "displayIntervals": ["TZ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Mauritania": {
-      "prefixes": ["5T"],
-      "displayIntervals": ["5T"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Monaco": {
-      "prefixes": ["3A"],
-      "displayIntervals": ["3A"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Mongolia": {
-      "prefixes": ["JT", "JU"],
-      "displayIntervals": ["JT - JU"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Montenegro": {
-      "prefixes": ["4O"],
-      "displayIntervals": ["4O"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Mozambique": {
-      "prefixes": ["C8", "C9"],
-      "displayIntervals": ["C8 - C9"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Namibia": {
-      "prefixes": ["V5"],
-      "displayIntervals": ["V5"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Nauru": {
-      "prefixes": ["C2"],
-      "displayIntervals": ["C2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Nepal": {
-      "prefixes": ["9N"],
-      "displayIntervals": ["9N"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Niger": {
-      "prefixes": ["5U"],
-      "displayIntervals": ["5U"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "North Korea - DPRK": {
-      "prefixes": ["P5"],
-      "displayIntervals": ["P5"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Pakistan": {
-      "prefixes": ["AP", "AQ", "AR", "AS"],
-      "displayIntervals": ["AP - AS"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Papua New Guinea": {
-      "prefixes": ["P2"],
-      "displayIntervals": ["P2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Qatar": {
-      "prefixes": ["A7"],
-      "displayIntervals": ["A7"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "San Marino": {
-      "prefixes": ["T7"],
-      "displayIntervals": ["T7"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Saudi Arabia": {
-      "prefixes": ["HZ"],
-      "displayIntervals": ["HZ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Seychelles": {
-      "prefixes": ["S7"],
-      "displayIntervals": ["S7"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Singapore": {
-      "prefixes": ["9V"],
-      "displayIntervals": ["9V"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Somalia": {
-      "prefixes": ["T5", "6O"],
-      "displayIntervals": ["T5", "6O"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Sri Lanka": {
-      "prefixes": ["4P", "4Q", "4R", "4S"],
-      "displayIntervals": ["4P - 4S"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Sudan": {
-      "prefixes": ["ST"],
-      "displayIntervals": ["ST"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Syria": {
-      "prefixes": ["YK"],
-      "displayIntervals": ["YK"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Tajikistan": {
-      "prefixes": ["EY"],
-      "displayIntervals": ["EY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Tanzania": {
-      "prefixes": ["5H", "5I"],
-      "displayIntervals": ["5H - 5I"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Togo": {
-      "prefixes": ["5V"],
-      "displayIntervals": ["5V"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Tonga": {
-      "prefixes": ["A3"],
-      "displayIntervals": ["A3"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Chad": {
-      "prefixes": ["TT"],
-      "displayIntervals": ["TT"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Tunisia": {
-      "prefixes": ["3V"],
-      "displayIntervals": ["3V"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Turkmenistan": {
-      "prefixes": ["EZ"],
-      "displayIntervals": ["EZ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Uganda": {
-      "prefixes": ["5X"],
-      "displayIntervals": ["5X"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Uzbekistan": {
-      "prefixes": ["UJ", "UK", "UL", "UM"],
-      "displayIntervals": ["UJ - UM"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Vanuatu": {
-      "prefixes": ["YJ"],
-      "displayIntervals": ["YJ"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Venezuela": {
-      "prefixes": ["YV", "YW", "YX", "YY"],
-      "displayIntervals": ["YV - YY"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Yemen": {
-      "prefixes": ["7O"],
-      "displayIntervals": ["7O"],
-      "hasQSLSortService": false,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Zambia": {
-      "prefixes": ["9I", "9J"],
-      "displayIntervals": ["9I - 9J"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    },
-    "Zimbabwe": {
-      "prefixes": ["Z2"],
-      "displayIntervals": ["Z2"],
-      "hasQSLSortService": true,
-      "relatedTerritories": [],
-      "specialSorting": []
-    }
-  },
-}    // === Utilities ===
-    const prefixUtils = {
-      /**
-       * Finds the country associated with a prefix.
-       * @param {string} prefix - The prefix to look up.
-       * @returns {string|null} The country name or null if not found.
-       */
-      getCountryByPrefix(prefix) {
-        return Object.keys(prefixData.countries).find(country =>
-          prefixData.countries[country].prefixes.includes(prefix)
-        ) || null;
-      },
-
-      /**
-       * Gets the display intervals for a country.
-       * @param {string} country - The country name.
-       * @returns {string[]} Array of prefix intervals or empty array.
-       */
-      getDisplayIntervals(country) {
-        return prefixData.countries[country]?.displayIntervals || [];
-      },
-
-      /**
-       * Checks if a prefix is valid.
-       * @param {string} prefix - The prefix to validate.
-       * @returns {boolean} True if valid, false otherwise.
-       */
-      isValidPrefix(prefix) {
-  return Object.values(prefixData.countries).some(c => c.prefixes.includes(prefix));
-},
-
-      /**
-       * Checks if a country has a QSL sort service.
-       * @param {string} country - The country name.
-       * @returns {boolean} True if the country has QSL service, false otherwise.
-       */
-      hasQSLSortService(country) {
-        return prefixData.countries[country]?.hasQSLSortService || false;
-      },
-
-      /**
-       * Gets the special sorting order for a callsign.
-       * @param {string} callsign - The callsign to sort.
-       * @param {string} country - The country of the callsign.
-       * @returns {string} The sorting key or the callsign itself.
-       */
-      getSpecialSortingOrder(callsign, country) {
-        const sorting = prefixData.countries[country]?.specialSorting || [];
-        return sorting.find(area => callsign.startsWith(area)) || callsign;
-      }
-    };
-
-    // === Event Listeners ===
-    callsignInput.addEventListener('keypress', function (event) {
-      if ((event.key === 'Enter' || event.code === 'Enter') && callsignInput.value.trim()) {
-        console.log('Enter key triggered, value:', callsignInput.value);
-        addCallsign();
-      }
-    });
-
-    callsignInput.addEventListener('keydown', function (event) {
-      if (event.code === 'Space' || event.key === ' ') {
-        console.log('Space key triggered, preventDefault called');
-        event.preventDefault();
-        event.stopPropagation();
-        if (callsigns.length > 0) {
-          console.log('Space pressed for sorting, callsigns:', callsigns);
-          displaySortedCallsigns();
+        if (missingElements.length > 0) {
+            console.error('Missing DOM elements:', missingElements.join(', '));
+            throw new Error(`Required DOM elements not found: ${missingElements.join(', ')}`);
         }
-      }
-    });
 
-    submitButton.addEventListener('click', function () {
-      console.log('Submit button clicked, callsigns:', callsigns);
-      displaySortedCallsigns();
-    });
+        // === Application State ===
+        let callsigns = [];
+        let counter = 0;
+        let isHelpVisible = false;
+        let isSorted = false;
+        let prefixData = null;
 
-    // === Core Functions ===
-    /**
-     * Adds a callsign to the list.
-     */
-    function addCallsign() {
-      try {
-        if (!callsignInput.value.trim()) return;
-        const callsign = callsignInput.value.trim().toUpperCase();
-        if (!callsign.match(/^[A-Z0-9\/]+$/)) {
-          console.warn('Invalid callsign format:', callsign);
-          return;
+        // === Configuration ===
+        const PREFIX_DATA_URL = 'https://raw.githubusercontent.com/rSignal86/ViewSort/main/data/prefixes.json';
+        const CURRENT_VERSION = 'GHv3.0.0';
+        const GITHUB_REPO = 'rSignal86/ViewSort';
+
+        // === Event Listeners ===
+        /**
+         * Handles Enter key to add callsign.
+         * @param {Event} event - The keyboard event.
+         */
+        function handleEnter(event) {
+            if (event.key === 'Enter' || event.code === 'Enter') {
+                const input = callsignInput.value.trim();
+                if (input) addCallsign();
+            }
         }
-        const prefix = extractPrefix(callsign);
-        if (!prefixUtils.isValidPrefix(prefix) && !callsign.match(/^[KNW][0-9]/) && !callsign.match(/^[A-Z][A-Z0-9]?/)) {
-          console.warn('Potentially invalid callsign:', callsign, 'prefix:', prefix);
+
+        /**
+         * Handles Space key to trigger sorting.
+         * @param {Event} event - The keyboard event.
+         */
+        function handleSpace(event) {
+            if (event.key === ' ' || event.code === 'Space') {
+                event.preventDefault();
+                event.stopPropagation();
+                if (callsigns.length > 0) displaySortedCallsigns();
+            }
         }
-        callsigns.push({ callsign, number: counter++ });
-        renderCallsignList();
-        callsignInput.value = '';
-        callsignInput.focus();
-        console.log('Callsign added:', callsign);
-      } catch (error) {
-        console.error('Error in addCallsign:', error);
-      }
-    }
 
-    /**
-     * Clears all callsigns and resets the state.
-     */
-    function clearCallsigns() {
-      try {
-        callsigns = [];
-        counter = 0;
-        callsignListInput.innerHTML = '';
-        callsignSortedListOutput.innerHTML = '';
-        generatePdfButton.style.display = 'none';
-        helpText.style.display = 'none';
-        helpText.innerHTML = '';
-        isHelpVisible = false;
-        isSorted = false;
-        window.speechSynthesis.cancel();
-        console.log('Cleared all callsigns');
-      } catch (error) {
-        console.error('Error in clearCallsigns:', error);
-      }
-    }
-
-    /**
-     * Renders the unsorted callsign list.
-     */
-    function renderCallsignList() {
-      try {
-        callsignListInput.innerHTML = '';
-        callsigns.forEach(({ callsign, number }) => {
-          const div = document.createElement('div');
-          div.textContent = `${callsign} #${number}`;
-          callsignListInput.appendChild(div);
-        });
-        callsignListInput.style.display = isHelpVisible ? 'none' : 'block';
-      } catch (error) {
-        console.error('Error in renderCallsignList:', error);
-      }
-    }
-
-    /**
-     * Extracts the prefix from a callsign.
-     * @param {string} callsign - The callsign to process.
-     * @returns {string} The extracted prefix or empty string if invalid.
-     */
-    function extractPrefix(callsign) {
-      try {
-        const possiblePrefixes = Object.values(prefixData.countries)
-          .flatMap(c => c.prefixes)
-          .filter(p => callsign.startsWith(p))
-          .sort((a, b) => b.length - a.length);
-        if (possiblePrefixes.length > 0) {
-          return possiblePrefixes[0];
+        /**
+         * Handles F9 key to toggle help message.
+         * @param {Event} event - The keyboard event.
+         */
+        function handleF9(event) {
+            if (event.key === 'F9') {
+                event.preventDefault();
+                toggleHelpMessage();
+            }
         }
-        if (callsign.match(/^[KNW][0-9]/)) {
-          return callsign.substring(0, 2);
+
+        /**
+         * Handles F10 key to generate PDF, if button is visible.
+         * @param {Event} event - The keyboard event.
+         */
+        function handleF10(event) {
+            if (event.key === 'F10') {
+                event.preventDefault();
+                if (generatePdfButton.style.display === 'inline-block') {
+                    generatePDF();
+                }
+            }
         }
-        if (callsign.match(/^[0-9][A-Z0-9]/)) {
-          return callsign.substring(0, 2);
+
+        callsignInput.addEventListener('keypress', handleEnter);
+        callsignInput.addEventListener('keydown', handleSpace);
+        document.addEventListener('keydown', handleF9);
+        document.addEventListener('keydown', handleF10);
+
+        // === Data Fetching ===
+        /**
+         * Fetches prefix data from GitHub and validates its structure.
+         * @returns {Promise<Object|null>} The prefix data or null if fetch fails.
+         */
+        async function fetchPrefixData() {
+            try {
+                loadingIndicator.style.display = 'inline';
+                const cacheBuster = `?t=${Date.now()}`;
+                const response = await fetch(PREFIX_DATA_URL + cacheBuster, { cache: 'no-cache' });
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}: Could not fetch prefix data`);
+                }
+                const data = await response.json();
+
+                // Validate JSON structure
+                if (!data || typeof data !== 'object' || !data.countries || !data.version) {
+                    throw new Error('Invalid prefix data structure');
+                }
+                if (!Object.keys(data.countries).length) {
+                    throw new Error('Prefix data contains no countries');
+                }
+                if (data.version !== '3.0.0') {
+                    console.warn(`Version mismatch: Expected 3.0.0, got ${data.version}`);
+                }
+
+                loadingIndicator.style.display = 'none';
+                return data;
+            } catch (error) {
+                console.error('Error fetching prefix data:', error.message);
+                loadingIndicator.style.display = 'none';
+                return null;
+            }
         }
-        if (callsign.match(/^[A-Z][A-Z0-9]?/)) {
-          return callsign.match(/^[A-Z][A-Z0-9]?/)?.[0] || '';
+
+        /**
+         * Loads prefix data and updates UI, optionally checking version.
+         * @param {boolean} isInitial - Whether this is the initial load.
+         */
+        async function loadPrefixData(isInitial = false) {
+            try {
+                prefixData = await fetchPrefixData();
+                if (!prefixData) {
+                    sortButton.disabled = true;
+                    versionMessage.textContent = 'Failed to load prefix data. Please try again later.';
+                } else {
+                    sortButton.disabled = false;
+                    versionMessage.textContent = isInitial ? '' : 'Prefix data refreshed successfully.';
+                }
+                if (isInitial) await checkVersion();
+            } catch (error) {
+                console.error('Error loading prefix data:', error.message);
+                versionMessage.textContent = 'Failed to load prefix data. Please try again.';
+            }
         }
-        return '';
-      } catch (error) {
-        console.error('Error in extractPrefix for callsign:', callsign, error);
-        return '';
-      }
-    }
 
-    /**
-     * Sorts the callsigns based on country and special sorting rules.
-     * @returns {Object[]} Sorted array of callsign objects.
-     */
-    function sortCallsigns() {
-      try {
-        return [...callsigns].filter(item => {
-          if (!item.callsign) {
-            console.warn('Invalid callsign object:', item);
-            return false;
-          }
-          return true;
-        }).sort((a, b) => {
-          const prefixA = extractPrefix(a.callsign);
-          const prefixB = extractPrefix(b.callsign);
-          const countryA = prefixUtils.getCountryByPrefix(prefixA) || '';
-          const countryB = prefixUtils.getCountryByPrefix(prefixB) || '';
-          if (countryA !== countryB) {
-            return countryA.localeCompare(countryB);
-          }
-          const areaA = prefixUtils.getSpecialSortingOrder(a.callsign, countryA);
-          const areaB = prefixUtils.getSpecialSortingOrder(b.callsign, countryB);
-          if (areaA !== areaB) {
-            const sortingA = prefixData.countries[countryA]?.specialSorting || [];
-            const sortingB = prefixData.countries[countryB]?.specialSorting || [];
-            return sortingA.indexOf(areaA) - sortingB.indexOf(areaB);
-          }
-          return a.callsign.localeCompare(b.callsign);
-        });
-      } catch (error) {
-        console.error('Error in sortCallsigns:', error);
-        return [];
-      }
-    }
+        // === Utilities ===
+        const prefixUtils = {
+            /**
+             * Looks up country and validity for a prefix.
+             * @param {string} prefix - The prefix to look up.
+             * @returns {Object} Object with country name and validity.
+             */
+            lookupPrefix(prefix) {
+                if (!prefixData) return { country: null, isValid: false };
+                const country = Object.keys(prefixData.countries).find(country =>
+                    prefixData.countries[country].prefixes.includes(prefix)
+                );
+                return { country: country || null, isValid: !!country };
+            },
 
-    /**
-     * Displays the sorted callsigns with validation messages.
-     */
-    function displaySortedCallsigns() {
-      try {
-        console.log('Starting displaySortedCallsigns, callsigns:', callsigns);
-        callsignListInput.innerHTML = '';
-        helpText.style.display = 'none';
-        helpText.innerHTML = '';
-        isHelpVisible = false;
-        isSorted = true;
-        window.speechSynthesis.cancel();
-        const sorted = sortCallsigns();
-        callsignSortedListOutput.style.display = 'block';
-        callsignSortedListOutput.style.visibility = 'visible';
-        callsignSortedListOutput.innerHTML = '';
+            /**
+             * Gets the display intervals for a country.
+             * @param {string} country - The country name.
+             * @returns {string[]} Array of prefix intervals or empty array.
+             */
+            getDisplayIntervals(country) {
+                if (!prefixData || !prefixData.countries[country]) return [];
+                return prefixData.countries[country].displayIntervals || [];
+            },
 
-        sorted.forEach(({ callsign, number }) => {
-          const prefix = extractPrefix(callsign);
-          const country = prefixUtils.getCountryByPrefix(prefix);
-          const isNoQSL = country && !prefixUtils.hasQSLSortService(country);
-const isUnknown = !prefixUtils.isValidPrefix(prefix) &&
-                  !prefixData.countries["United States"]?.specialSorting.some(a => callsign.startsWith(a)) &&
-                  !prefixData.countries["Japan"]?.specialSorting.some(a => callsign.startsWith(a));
+            /**
+             * Checks if a country has a QSL sort service.
+             * @param {string} country - The country name.
+             * @returns {boolean} True if the country has QSL service, false otherwise.
+             */
+            hasQSLSortService(country) {
+                if (!prefixData || !prefixData.countries[country]) return false;
+                return prefixData.countries[country].hasQSLSortService || false;
+            },
 
-const div = document.createElement('div');
-if (isNoQSL) {
-  div.className = 'invalid-output';
-  div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-  div.innerHTML += `<span class="invalid-note"> This card cannot be sent with the bureau. Please choose another Method or save this card for later mailing.</span>`;
-} else if (isUnknown) {
-  div.className = 'invalid-output';
-  div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-  div.innerHTML += `<span class="invalid-note">Unknown prefix. Please verify the callsign.</span>`;
-} else {
-  div.innerHTML = `${callsign} <strong>#${number}</strong>`;
-}
-          callsignSortedListOutput.appendChild(div);
-        });
+            /**
+             * Gets the special sorting order for a callsign.
+             * @param {string} callsign - The callsign to sort.
+             * @param {string} country - The country of the callsign.
+             * @returns {string} The sorting key or the callsign itself.
+             */
+            getSpecialSortingOrder(callsign, country) {
+                if (!prefixData || !prefixData.countries[country]) return callsign;
+                const sorting = prefixData.countries[country].specialSorting || [];
+                return sorting.find(area => callsign.startsWith(area)) || callsign;
+            }
+        };
 
-        generatePdfButton.style.display = 'inline-block';
-      } catch (error) {
-        console.error('Error in displaySortedCallsigns:', error);
-      }
-    }
-
-    /**
-     * Toggles the help message with instructions.
-     */
-    function toggleHelpMessage() {
-      try {
-        const message = [
-          "Hi, I'm ViewSort, your digital QSL card organizer. My job is to help you sort QSL cards before you send them off.",
-          "Once you've entered your callsign, just press the \"enter\" key on your keyboard or the green \"Add QSL card\" button, you'll notice as you enter more QSL cards you'll see a number, this is a temporary number that you write on your QSL card.",
-          "Once you've entered all the cards, press the spacebar or the blue \"submit\" button and all the cards will be sorted according to the rules of the game.",
-          "All you have to do after I've sorted them for you is follow the numbers you've written on the card in the order I've put them on your screen.",
-          "You can generate a PDF with prefix strips for valid countries, including country names and prefix intervals, by clicking the \"Generate PDF\" button after sorting.",
-          "You may experience some errors after I've sorted them, but then you'll read what's wrong and make the recommendation I have given.",
-          "I wish you a nice day. 7 3."
-        ];
-
-        if (isHelpVisible) {
-          helpText.style.display = 'none';
-          helpText.innerHTML = '';
-          callsignListInput.style.display = isSorted ? 'none' : 'block';
-          callsignSortedListOutput.style.display = isSorted ? 'block' : 'none';
-          isHelpVisible = false;
-          window.speechSynthesis.cancel();
-        } else {
-          helpText.innerHTML = message.map(line => `<p>${line}</p>`).join('');
-          helpText.style.display = 'block';
-          callsignListInput.style.display = 'none';
-          callsignSortedListOutput.style.display = 'none';
-          isHelpVisible = true;
-
-          const utterance = new SpeechSynthesisUtterance(message.join(' '));
-          utterance.lang = 'en-US';
-          utterance.onend = () => {
-            helpText.style.display = 'none';
-            helpText.innerHTML = '';
-            callsignListInput.style.display = isSorted ? 'none' : 'block';
-            callsignSortedListOutput.style.display = isSorted ? 'block' : 'none';
-            isHelpVisible = false;
-          };
-          window.speechSynthesis.speak(utterance);
+        // === Core Functions ===
+        /**
+         * Updates the UI for the unsorted callsign list.
+         */
+        function updateCallsignUI() {
+            try {
+                callsignListInput.innerHTML = '';
+                callsigns.forEach(({ callsign, number }) => {
+                    const div = document.createElement('div');
+                    div.textContent = `${callsign} #${number}`;
+                    callsignListInput.appendChild(div);
+                });
+                callsignListInput.style.display = isHelpVisible ? 'none' : 'block';
+            } catch (error) {
+                console.error('Error updating callsign UI:', error.message);
+            }
         }
-      } catch (error) {
-        console.error('Error in toggleHelpMessage:', error);
-      }
-    }
 
-    /**
-     * Generates a PDF with prefix strips for each country.
-     */
-    function generatePDF() {
-      try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-        const pageWidth = 210;
-        const margin = 10;
-        const stripWidth = pageWidth - 2 * margin;
-        const stripHeight = 35;
-        let y = 10;
-        const adText = 'Sorted and labeled with ViewSort: https://github.com/rSignal86/ViewSort';
-
-        // Group callsigns by country
-        const countryGroups = {};
-        sortCallsigns().forEach(({ callsign }) => {
-          const prefix = extractPrefix(callsign);
-          const country = prefixUtils.getCountryByPrefix(prefix);
-          if (!country || !prefixUtils.isValidPrefix(prefix) || !prefixUtils.hasQSLSortService(country)) return;
-          countryGroups[country] = countryGroups[country] || [];
-          countryGroups[country].push(callsign);
-        });
-
-        // Generate strips for each country
-        Object.keys(countryGroups).forEach(country => {
-          // Top dashed line
-          doc.setLineDashPattern([1, 1], 0);
-          doc.line(margin, y, pageWidth - margin, y);
-
-          // Country name (bold, 14pt, centered)
-          doc.setFont('Helvetica', 'bold');
-          doc.setFontSize(14);
-          doc.text(country, pageWidth / 2, y + 10, { align: 'center' });
-
-          // Prefix intervals (normal, 10pt, centered, with wrapping)
-          doc.setFont('Helvetica', 'normal');
-          doc.setFontSize(10);
-          const prefixText = prefixUtils.getDisplayIntervals(country).join(', ') ||
-                            countryGroups[country]
-                              .map(c => extractPrefix(c))
-                              .filter((v, i, a) => a.indexOf(v) === i)
-                              .sort()
-                              .join('-');
-          const wrappedText = doc.splitTextToSize(prefixText, stripWidth - 10);
-          wrappedText.forEach((line, index) => {
-            doc.text(line, pageWidth / 2, y + 15 + index * 5, { align: 'center' });
-          });
-
-          // Advertisement text (normal, 6pt, right-aligned)
-          doc.setFontSize(6);
-          doc.text(adText, pageWidth - margin, y + 25, { align: 'right' });
-
-          // Bottom dashed line
-          doc.setLineDashPattern([1, 1], 0);
-          doc.line(margin, y + 30, pageWidth - margin, y + 30);
-          doc.setLineDashPattern([], 0);
-
-          y += 35;
-          if (y > 260) {
-            doc.addPage();
-            y = 10;
-          }
-        });
-
-        doc.save('ViewSort-PaperStrips.pdf');
-      } catch (error) {
-        console.error('Error in generatePDF:', error);
-      }
-    }
-
-    // Initialize version message
-    async function checkVersion() {
-      try {
-        const CURRENT_VERSION = "GHv2.1.0";
-        const GITHUB_REPO = "rSignal86/ViewSort";
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`);
-        if (!response.ok) throw new Error("Could not fetch version info");
-        const data = await response.json();
-        const latestVersion = data.tag_name;
-
-        if (latestVersion && latestVersion !== CURRENT_VERSION) {
-          versionMessage.innerHTML = `New version available: <strong>${latestVersion}</strong>. Visit <a href="https://github.com/${GITHUB_REPO}" target="_blank">GitHub</a> to download.`;
-        } else {
-          versionMessage.textContent = `You are using the latest version: ${CURRENT_VERSION}.`;
+        /**
+         * Adds a callsign to the list.
+         */
+        function addCallsign() {
+            try {
+                const callsign = callsignInput.value.trim().toUpperCase();
+                if (!callsign || !callsign.match(/^[A-Z0-9\/]+$/)) {
+                    console.warn('Invalid callsign format:', callsign);
+                    return;
+                }
+                const prefix = extractPrefix(callsign);
+                if (!prefixUtils.lookupPrefix(prefix).isValid && !callsign.match(/^[KNW][0-9]/) && !callsign.match(/^[A-Z][A-Z0-9]?/)) {
+                    console.warn('Potentially invalid callsign:', callsign);
+                }
+                callsigns.push({ callsign, number: counter++ });
+                updateCallsignUI();
+                callsignInput.value = '';
+                callsignInput.focus();
+            } catch (error) {
+                console.error('Error adding callsign:', error.message);
+            }
         }
-      } catch (error) {
-        console.error('Version check failed:', error);
-        versionMessage.textContent = "Could not check for version updates.";
-      }
-    }
 
-    checkVersion();
+        /**
+         * Clears all callsigns and resets the state.
+         */
+        function clearCallsigns() {
+            try {
+                callsigns = [];
+                counter = 0;
+                callsignSortedListOutput.innerHTML = '';
+                generatePdfButton.style.display = 'none';
+                helpText.style.display = 'none';
+                helpText.innerHTML = '';
+                isHelpVisible = false;
+                isSorted = false;
+                window.speechSynthesis.cancel();
+                updateCallsignUI();
+            } catch (error) {
+                console.error('Error clearing callsigns:', error.message);
+            }
+        }
 
-  </script>
+        /**
+         * Extracts the prefix from a callsign.
+         * @param {string} callsign - The callsign to process.
+         * @returns {string} The extracted prefix or empty string if invalid.
+         */
+        function extractPrefix(callsign) {
+            try {
+                if (!prefixData) {
+                    console.warn('No prefix data available');
+                    return '';
+                }
+                const possiblePrefixes = Object.values(prefixData.countries)
+                    .flatMap(c => c.prefixes)
+                    .filter(p => callsign.startsWith(p))
+                    .sort((a, b) => b.length - a.length);
+                if (possiblePrefixes.length > 0) {
+                    return possiblePrefixes[0];
+                }
+                if (callsign.match(/^[KNW][0-9]/)) {
+                    return callsign.substring(0, 2);
+                }
+                if (callsign.match(/^[0-9][A-Z0-9]/)) {
+                    return callsign.substring(0, 2);
+                }
+                if (callsign.match(/^[A-Z][A-Z0-9]?/)) {
+                    return callsign.match(/^[A-Z][A-Z0-9]?/)?.[0] || '';
+                }
+                console.warn('No prefix matched for callsign:', callsign);
+                return '';
+            } catch (error) {
+                console.error('Error extracting prefix:', error.message);
+                return '';
+            }
+        }
+
+        /**
+         * Sorts callsigns with metadata for country, QSL service, and validity.
+         * @returns {Object[]} Sorted array of callsign objects with metadata.
+         */
+        function sortCallsigns() {
+            try {
+                if (!prefixData) {
+                    console.error('Cannot sort callsigns: prefix data not loaded');
+                    return [];
+                }
+                return [...callsigns].filter(item => {
+                    if (!item.callsign) {
+                        console.warn('Invalid callsign object:', item);
+                        return false;
+                    }
+                    return true;
+                }).map(item => {
+                    const prefix = extractPrefix(item.callsign);
+                    const { country, isValid } = prefixUtils.lookupPrefix(prefix);
+                    const isNoQSL = country && !prefixUtils.hasQSLSortService(country);
+                    const isUnknown = !isValid &&
+                        !prefixData.countries["United States"]?.specialSorting.some(a => item.callsign.startsWith(a)) &&
+                        !prefixData.countries["Japan"]?.specialSorting.some(a => item.callsign.startsWith(a));
+                    return { ...item, country, isNoQSL, isUnknown };
+                }).sort((a, b) => {
+                    const countryA = a.country || '';
+                    const countryB = b.country || '';
+                    if (countryA !== countryB) {
+                        return countryA.localeCompare(countryB);
+                    }
+                    const areaA = prefixUtils.getSpecialSortingOrder(a.callsign, countryA);
+                    const areaB = prefixUtils.getSpecialSortingOrder(b.callsign, countryB);
+                    if (areaA !== areaB) {
+                        const sortingA = prefixData.countries[countryA]?.specialSorting || [];
+                        const sortingB = prefixData.countries[countryB]?.specialSorting || [];
+                        return sortingA.indexOf(areaA) - sortingB.indexOf(areaB);
+                    }
+                    return a.callsign.localeCompare(b.callsign);
+                });
+            } catch (error) {
+                console.error('Error sorting callsigns:', error.message);
+                return [];
+            }
+        }
+
+        /**
+         * Displays the sorted callsigns in the UI.
+         */
+        function displaySortedCallsigns() {
+            try {
+                if (!prefixData) {
+                    versionMessage.textContent = 'Cannot sort: prefix data not loaded.';
+                    return;
+                }
+                callsignListInput.innerHTML = '';
+                helpText.style.display = 'none';
+                helpText.innerHTML = '';
+                isHelpVisible = false;
+                isSorted = true;
+                window.speechSynthesis.cancel();
+                const sorted = sortCallsigns();
+                callsignSortedListOutput.style.display = 'block';
+                callsignSortedListOutput.style.visibility = 'visible';
+                callsignSortedListOutput.innerHTML = '';
+
+                sorted.forEach(({ callsign, number, isNoQSL, isUnknown }) => {
+                    const div = document.createElement('div');
+                    if (isNoQSL) {
+                        div.className = 'invalid-output';
+                        div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+                        div.innerHTML += `<span class="invalid-note"> This card cannot be sent with the bureau. Please choose another method or save this card for later mailing.</span>`;
+                    } else if (isUnknown) {
+                        div.className = 'invalid-output';
+                        div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+                        div.innerHTML += `<span class="invalid-note">Unknown prefix. Please verify the callsign.</span>`;
+                    } else {
+                        div.innerHTML = `${callsign} <strong>#${number}</strong>`;
+                    }
+                    callsignSortedListOutput.appendChild(div);
+                });
+
+                generatePdfButton.style.display = 'inline-block';
+            } catch (error) {
+                console.error('Error displaying sorted callsigns:', error.message);
+            }
+        }
+
+        /**
+         * Generates a PDF with one country strip per unique country for QSL card wrapping.
+         */
+        function generatePDF() {
+            try {
+                if (!prefixData) {
+                    console.error('Cannot generate PDF: prefix data not loaded');
+                    versionMessage.textContent = 'Cannot generate PDF: prefix data not loaded.';
+                    return;
+                }
+                if (!window.jspdf) {
+                    console.error('jsPDF library not loaded');
+                    versionMessage.textContent = 'PDF generation failed: jsPDF not loaded.';
+                    return;
+                }
+                if (!callsigns.length) {
+                    versionMessage.textContent = 'No callsigns to include in PDF.';
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 15;
+                let yPosition = margin;
+
+                const sorted = sortCallsigns();
+                const countriesIncluded = new Set(sorted.map(item => item.country).filter(Boolean));
+                const sortedCountries = Array.from(countriesIncluded).sort((a, b) => a.localeCompare(b));
+
+                sortedCountries.forEach(country => {
+                    if (yPosition + 25 > pageHeight - margin) {
+                        doc.addPage();
+                        yPosition = margin;
+                    }
+
+                    doc.setLineWidth(0.5);
+                    doc.setLineDash([2, 2], 0);
+                    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+                    doc.setLineDash();
+                    yPosition += 5;
+
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    const countryText = country;
+                    const countryTextWidth = doc.getTextWidth(countryText);
+                    doc.text(countryText, (pageWidth - countryTextWidth) / 2, yPosition);
+                    yPosition += 6;
+
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'normal');
+                    const intervals = prefixUtils.getDisplayIntervals(country).join(', ');
+                    const intervalsText = intervals ? `(${intervals})` : '';
+                    const intervalsTextWidth = doc.getTextWidth(intervalsText);
+                    doc.text(intervalsText, (pageWidth - intervalsTextWidth) / 2, yPosition);
+                    yPosition += 6;
+
+                    doc.setFontSize(8);
+                    const adText = 'Generated by ViewSort - Your Digital QSL Card Sorter (github.com/rSignal86/ViewSort)';
+                    const adTextWidth = doc.getTextWidth(adText);
+                    doc.text(adText, (pageWidth - adTextWidth) / 2, yPosition);
+                    yPosition += 5;
+
+                    doc.setLineWidth(0.5);
+                    doc.setLineDash([2, 2], 0);
+                    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+                    doc.setLineDash();
+                    yPosition += 10;
+                });
+
+                if (countriesIncluded.size === 0) {
+                    versionMessage.textContent = 'No valid callsigns to include in PDF.';
+                    return;
+                }
+
+                doc.save('ViewSort_QSL_Strips.pdf');
+            } catch (error) {
+                console.error('Error generating PDF:', error.message);
+                versionMessage.textContent = 'Failed to generate PDF. Please try again.';
+            }
+        }
+
+        /**
+         * Toggles the help message with instructions, prompting for audio playback.
+         */
+        function toggleHelpMessage() {
+            try {
+                const message = [
+                    "Welcome to ViewSort, your digital QSL card sorter! I help you organize QSL cards for mailing.",
+                    "Enter a callsign in the input field and press ENTER or click the green 'Add QSL Card' button. Each callsign gets a number to write on your card for sorting.",
+                    "When ready, press SPACE or click the blue 'Start Sorting' button to sort callsigns alphabetically by country.",
+                    "Check the sorted list for warnings: 'Unknown prefix' means you have to verify the callsign for typing error; 'Cannot be sent with the bureau' means use another mailing method.",
+                    "After sorting, the turquoise 'Generate PDF' button appears. Press F10 or click it to create strips with country names, that you can print out and use.",
+                    "Press F9 or click the yellow 'Help' button to show or hide this guide, with an option for voice narration.",
+                    "Click the gray 'Refresh Data' button to update prefix data if needed.",
+                    "Click the red 'Clear All' button to reset everything and start over.",
+		    "And by the way, if you see a mistake like a missing prefix, you can find the email adress to Lima Bravo Six Quebec Juliet on Q R Z.com or call him on 1 4 5 500.",
+                    "Happy sorting! 7 3."
+                ];
+
+                if (isHelpVisible) {
+                    helpText.style.display = 'none';
+                    helpText.innerHTML = '';
+                    callsignListInput.style.display = isSorted ? 'none' : 'block';
+                    callsignSortedListOutput.style.display = isSorted ? 'block' : 'none';
+                    isHelpVisible = false;
+                    window.speechSynthesis.cancel();
+                } else {
+                    // Prompt user for audio playback
+                    const playAudio = confirm('Would you like to play audio narration for the help guide?');
+                    
+                    // Show help text
+                    helpText.innerHTML = message.map(line => `<p>${line}</p>`).join('');
+                    helpText.style.display = 'block';
+                    callsignListInput.style.display = 'none';
+                    callsignSortedListOutput.style.display = 'none';
+                    isHelpVisible = true;
+
+                    if (playAudio) {
+                        // Play audio if user selects "OK"
+                        const utterance = new SpeechSynthesisUtterance(message.join(' '));
+                        utterance.lang = 'en-US';
+                        utterance.onend = () => {
+                            helpText.style.display = 'none';
+                            helpText.innerHTML = '';
+                            callsignListInput.style.display = isSorted ? 'none' : 'block';
+                            callsignSortedListOutput.style.display = isSorted ? 'block' : 'none';
+                            isHelpVisible = false;
+                        };
+                        window.speechSynthesis.speak(utterance);
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling help message:', error.message);
+            }
+        }
+
+        /**
+         * Checks for the latest version of ViewSort on GitHub.
+         */
+        async function checkVersion() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`);
+                if (!response.ok) throw new Error('Could not fetch version info');
+                const data = await response.json();
+                const latestVersion = data.tag_name;
+
+                if (latestVersion && latestVersion !== CURRENT_VERSION) {
+                    versionMessage.innerHTML = `New version available: <strong>${latestVersion}</strong>. Visit <a href="https://github.com/${GITHUB_REPO}" target="_blank">GitHub</a> to download.`;
+                } else {
+                    versionMessage.textContent = `You are using the latest version: ${CURRENT_VERSION}.`;
+                }
+            } catch (error) {
+                console.error('Version check failed:', error.message);
+                versionMessage.textContent = 'Could not check for version updates.';
+            }
+        }
+
+        // Initialize the application
+        loadPrefixData(true);
+    </script>
 </body>
 </html>
