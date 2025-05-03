@@ -113,7 +113,7 @@
       "relatedTerritories": [],
       "specialSorting": []
     },
-    "Belgium-TESTERERERER": {
+    "Belgium": {
       "prefixes": ["ON","OO", "OP", "OQ", "OR", "OS", "OT"],
       "displayIntervals": ["ON - OT"],
       "hasQSLSortService": true,
