@@ -3,14 +3,14 @@
 ## ViewSort is a simple yet intelligent web tool built to help amateur radio operators efficiently sort their QSL cards before mailing them.  
 It validates, organizes, and flags callsigns according to common QSL bureau rules. If you don't know how to sort QSL cards, ViewSort will do it for you.  
 All you have to do is write the callsign into the program and note the number it gives you back on the card.  
-When you're done, click "Submit" and follow the numbers from top to bottom. The program will also tell you which cards require more attention.
+When you're done, click "Start Sorting" and follow the numbers from top to bottom. The program will also tell you which cards require more attention.
 
-> 🎉 **New in Version GHv2.1.0:** You can now generate a **PDF** with the sorted results – perfect for printing or archiving.
+> 🎉 **New "thing":** You can now generate a **PDF** with the sorted results – perfect for printing or archiving.
 
 The program works best in **Microsoft Edge**, especially for the help voice feature. But it works in **all modern browsers** for the sorting part.  
 No installation required. Simply clone or download the repository and open the `ViewSort.html` file in your browser.
 
-Created with the help of **AI** and **LB6QJ**, working together to support the amateur radio community with ❤️.
+Created with the help of **AI** and **LB6QJ** that is working together to support the amateur radio community with ❤️.
 
 ---
 
@@ -22,8 +22,7 @@ Created with the help of **AI** and **LB6QJ**, working together to support the a
 - Warnings for excluded or unsupported QSL destinations
 - **PDF generation** for sorted QSL list (new in GHv2.0)
 - Built-in interactive help with **voice guidance**
-- Modular and expandable prefix system
-- Works offline – no server required
+- Modular and expandable prefix system.
 
 ---
 
@@ -81,7 +80,7 @@ You can safely use it for personal use, clubs, or events without compromising an
   - Repositioned buttons for better logic flow
   - Merged unsupported countries into a shared category to avoid political discrimination
 - **GHv3.0.0**
-  - Prefixes are now stored in an external JSON file for easier maintenance and updates
+  - Prefixes are now stored in an external JSON file for easier maintenance and updates, you do now need internet to support the sorting function.
   - Added more shortcut keys to various buttons for improved usability
 
 ---
