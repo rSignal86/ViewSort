@@ -9,8 +9,9 @@ When you're done, click "Start Sorting" and follow the numbers from top to botto
 
 The program works best in **Microsoft Edge**, especially for the help voice feature. But it works in **all modern browsers** for the sorting part.  
 No installation required. Simply clone or download the repository and open the `ViewSort.html` file in your browser.
+It is recommended to place ViewSort.html on you desktop.
 
-Created with the help of **AI** and **LB6QJ** that is working together to support the amateur radio community with ❤️.
+Built with ❤️ by an amateur for a amateur, with help from AI.
 
 ---
 
@@ -29,11 +30,10 @@ Created with the help of **AI** and **LB6QJ** that is working together to suppor
 ## 🛠️ How to Use
 1. Open `ViewSort.html` in any modern web browser.
 2. Type in callsigns (e.g. `LB6QJ`, `K5ABC`) and click "Add QSL Card".
-3. Press **"Submit"** or hit the **spacebar** to sort.
+3. Press **"Start Sorting"** or hit the **spacebar** to sort.
 4. Cards will be organized by rules and flagged if:
-   - They're excluded from bureau services
    - The prefix is unrecognized
-   - The country has no national QSL service
+   - The country has no national QSL service or not able to send QSL card for now
 5. Press **"Generate PDF"** to export the sorted result.
 
 ---
