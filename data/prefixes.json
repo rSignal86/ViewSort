@@ -212,7 +212,7 @@
       "specialSorting": []
     },
     "Canada": {
-      "prefixes": ["VE", "VA", "VB", "VC", "VD", "VG", "VO", "VY"],
+      "prefixes": ["VA", "VB", "VC", "VD", "VG", "VO", "VY"],
       "displayIntervals": ["VA - VY"],
       "hasQSLSortService": true,
       "relatedTerritories": ["Newfoundland", "Yukon"],
