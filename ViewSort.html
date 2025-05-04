@@ -178,15 +178,11 @@
         let prefixData = null;
 
         // === Configuration ===
-        const PREFIX_DATA_URL = 'https://raw.githubusercontent.com/rSignal86/ViewSort/main/data/prefixes.json';
-        const CURRENT_VERSION = 'GHv3.0.0';
+        const PREFIX_DATA_URL = 'https://raw.githubusercontent.com/rSignal86/ViewSort/main/data/prefixList.json';
+        const CURRENT_VERSION = 'GHv3.3.0';
         const GITHUB_REPO = 'rSignal86/ViewSort';
 
         // === Event Listeners ===
-        /**
-         * Handles Enter key to add callsign.
-         * @param {Event} event - The keyboard event.
-         */
         function handleEnter(event) {
             if (event.key === 'Enter' || event.code === 'Enter') {
                 const input = callsignInput.value.trim();
@@ -194,10 +190,6 @@
             }
         }
 
-        /**
-         * Handles Space key to trigger sorting.
-         * @param {Event} event - The keyboard event.
-         */
         function handleSpace(event) {
             if (event.key === ' ' || event.code === 'Space') {
                 event.preventDefault();
@@ -206,10 +198,6 @@
             }
         }
 
-        /**
-         * Handles F9 key to toggle help message.
-         * @param {Event} event - The keyboard event.
-         */
         function handleF9(event) {
             if (event.key === 'F9') {
                 event.preventDefault();
@@ -217,10 +205,6 @@
             }
         }
 
-        /**
-         * Handles F10 key to generate PDF, if button is visible.
-         * @param {Event} event - The keyboard event.
-         */
         function handleF10(event) {
             if (event.key === 'F10') {
                 event.preventDefault();
@@ -236,10 +220,6 @@
         document.addEventListener('keydown', handleF10);
 
         // === Data Fetching ===
-        /**
-         * Fetches prefix data from GitHub and validates its structure.
-         * @returns {Promise<Object|null>} The prefix data or null if fetch fails.
-         */
         async function fetchPrefixData() {
             try {
                 loadingIndicator.style.display = 'inline';
@@ -257,8 +237,8 @@
                 if (!Object.keys(data.countries).length) {
                     throw new Error('Prefix data contains no countries');
                 }
-                if (data.version !== '3.0.0') {
-                    console.warn(`Version mismatch: Expected 3.0.0, got ${data.version}`);
+                if (data.version !== '3.3.0') {
+                    console.warn(`Version mismatch: Expected 3.3.0, got ${data.version}`);
                 }
 
                 loadingIndicator.style.display = 'none';
@@ -270,10 +250,6 @@
             }
         }
 
-        /**
-         * Loads prefix data and updates UI, optionally checking version.
-         * @param {boolean} isInitial - Whether this is the initial load.
-         */
         async function loadPrefixData(isInitial = false) {
             try {
                 prefixData = await fetchPrefixData();
@@ -293,11 +269,6 @@
 
         // === Utilities ===
         const prefixUtils = {
-            /**
-             * Looks up country and validity for a prefix.
-             * @param {string} prefix - The prefix to look up.
-             * @returns {Object} Object with country name and validity.
-             */
             lookupPrefix(prefix) {
                 if (!prefixData) return { country: null, isValid: false };
                 const country = Object.keys(prefixData.countries).find(country =>
@@ -306,43 +277,18 @@
                 return { country: country || null, isValid: !!country };
             },
 
-            /**
-             * Gets the display intervals for a country.
-             * @param {string} country - The country name.
-             * @returns {string[]} Array of prefix intervals or empty array.
-             */
             getDisplayIntervals(country) {
                 if (!prefixData || !prefixData.countries[country]) return [];
                 return prefixData.countries[country].displayIntervals || [];
             },
 
-            /**
-             * Checks if a country has a QSL sort service.
-             * @param {string} country - The country name.
-             * @returns {boolean} True if the country has QSL service, false otherwise.
-             */
             hasQSLSortService(country) {
                 if (!prefixData || !prefixData.countries[country]) return false;
                 return prefixData.countries[country].hasQSLSortService || false;
-            },
-
-            /**
-             * Gets the special sorting order for a callsign.
-             * @param {string} callsign - The callsign to sort.
-             * @param {string} country - The country of the callsign.
-             * @returns {string} The sorting key or the callsign itself.
-             */
-            getSpecialSortingOrder(callsign, country) {
-                if (!prefixData || !prefixData.countries[country]) return callsign;
-                const sorting = prefixData.countries[country].specialSorting || [];
-                return sorting.find(area => callsign.startsWith(area)) || callsign;
             }
         };
 
         // === Core Functions ===
-        /**
-         * Updates the UI for the unsorted callsign list.
-         */
         function updateCallsignUI() {
             try {
                 callsignListInput.innerHTML = '';
@@ -357,9 +303,6 @@
             }
         }
 
-        /**
-         * Adds a callsign to the list.
-         */
         function addCallsign() {
             try {
                 const callsign = callsignInput.value.trim().toUpperCase();
@@ -368,7 +311,7 @@
                     return;
                 }
                 const prefix = extractPrefix(callsign);
-                if (!prefixUtils.lookupPrefix(prefix).isValid && !callsign.match(/^[KNW][0-9]/) && !callsign.match(/^[A-Z][A-Z0-9]?/)) {
+                if (!prefixUtils.lookupPrefix(prefix).isValid) {
                     console.warn('Potentially invalid callsign:', callsign);
                 }
                 callsigns.push({ callsign, number: counter++ });
@@ -380,9 +323,6 @@
             }
         }
 
-        /**
-         * Clears all callsigns and resets the state.
-         */
         function clearCallsigns() {
             try {
                 callsigns = [];
@@ -400,32 +340,19 @@
             }
         }
 
-        /**
-         * Extracts the prefix from a callsign.
-         * @param {string} callsign - The callsign to process.
-         * @returns {string} The extracted prefix or empty string if invalid.
-         */
         function extractPrefix(callsign) {
             try {
                 if (!prefixData) {
                     console.warn('No prefix data available');
                     return '';
                 }
+                const cleanCallsign = callsign.split('/')[0];
                 const possiblePrefixes = Object.values(prefixData.countries)
                     .flatMap(c => c.prefixes)
-                    .filter(p => callsign.startsWith(p))
+                    .filter(p => cleanCallsign.startsWith(p))
                     .sort((a, b) => b.length - a.length);
                 if (possiblePrefixes.length > 0) {
                     return possiblePrefixes[0];
-                }
-                if (callsign.match(/^[KNW][0-9]/)) {
-                    return callsign.substring(0, 2);
-                }
-                if (callsign.match(/^[0-9][A-Z0-9]/)) {
-                    return callsign.substring(0, 2);
-                }
-                if (callsign.match(/^[A-Z][A-Z0-9]?/)) {
-                    return callsign.match(/^[A-Z][A-Z0-9]?/)?.[0] || '';
                 }
                 console.warn('No prefix matched for callsign:', callsign);
                 return '';
@@ -435,10 +362,6 @@
             }
         }
 
-        /**
-         * Sorts callsigns with metadata for country, QSL service, and validity.
-         * @returns {Object[]} Sorted array of callsign objects with metadata.
-         */
         function sortCallsigns() {
             try {
                 if (!prefixData) {
@@ -455,9 +378,7 @@
                     const prefix = extractPrefix(item.callsign);
                     const { country, isValid } = prefixUtils.lookupPrefix(prefix);
                     const isNoQSL = country && !prefixUtils.hasQSLSortService(country);
-                    const isUnknown = !isValid &&
-                        !prefixData.countries["United States"]?.specialSorting.some(a => item.callsign.startsWith(a)) &&
-                        !prefixData.countries["Japan"]?.specialSorting.some(a => item.callsign.startsWith(a));
+                    const isUnknown = !isValid;
                     return { ...item, country, isNoQSL, isUnknown };
                 }).sort((a, b) => {
                     const countryA = a.country || '';
@@ -465,12 +386,12 @@
                     if (countryA !== countryB) {
                         return countryA.localeCompare(countryB);
                     }
-                    const areaA = prefixUtils.getSpecialSortingOrder(a.callsign, countryA);
-                    const areaB = prefixUtils.getSpecialSortingOrder(b.callsign, countryB);
-                    if (areaA !== areaB) {
-                        const sortingA = prefixData.countries[countryA]?.specialSorting || [];
-                        const sortingB = prefixData.countries[countryB]?.specialSorting || [];
-                        return sortingA.indexOf(areaA) - sortingB.indexOf(areaB);
+                    const prefixA = extractPrefix(a.callsign);
+                    const prefixB = extractPrefix(b.callsign);
+                    const aIndex = prefixData.countries[countryA]?.prefixes.indexOf(prefixA) || 0;
+                    const bIndex = prefixData.countries[countryB]?.prefixes.indexOf(prefixB) || 0;
+                    if (aIndex !== bIndex) {
+                        return aIndex - bIndex;
                     }
                     return a.callsign.localeCompare(b.callsign);
                 });
@@ -480,9 +401,6 @@
             }
         }
 
-        /**
-         * Displays the sorted callsigns in the UI.
-         */
         function displaySortedCallsigns() {
             try {
                 if (!prefixData) {
@@ -522,9 +440,6 @@
             }
         }
 
-        /**
-         * Generates a PDF with one country strip per unique country for QSL card wrapping.
-         */
         function generatePDF() {
             try {
                 if (!prefixData) {
@@ -605,9 +520,6 @@
             }
         }
 
-        /**
-         * Toggles the help message with instructions, prompting for audio playback.
-         */
         function toggleHelpMessage() {
             try {
                 const message = [
@@ -619,7 +531,7 @@
                     "Press F9 or click the yellow 'Help' button to show or hide this guide, with an option for voice narration.",
                     "Click the gray 'Refresh Data' button to update prefix data if needed.",
                     "Click the red 'Clear All' button to reset everything and start over.",
-		    "And by the way, if you see a mistake like a missing prefix, you can find the email adress to Lima Bravo Six Quebec Juliet on Q R Z.com or call him on 1 4 5 500.",
+                    "And by the way, if you see a mistake like a missing prefix, you can find the email adress to Lima Bravo Six Quebec Juliet on Q R Z.com or call him on 1 4 5 500.",
                     "Happy sorting! 7 3."
                 ];
 
@@ -631,10 +543,7 @@
                     isHelpVisible = false;
                     window.speechSynthesis.cancel();
                 } else {
-                    // Prompt user for audio playback
                     const playAudio = confirm('Would you like to play audio narration for the help guide?');
-                    
-                    // Show help text
                     helpText.innerHTML = message.map(line => `<p>${line}</p>`).join('');
                     helpText.style.display = 'block';
                     callsignListInput.style.display = 'none';
@@ -642,7 +551,6 @@
                     isHelpVisible = true;
 
                     if (playAudio) {
-                        // Play audio if user selects "OK"
                         const utterance = new SpeechSynthesisUtterance(message.join(' '));
                         utterance.lang = 'en-US';
                         utterance.onend = () => {
@@ -660,9 +568,6 @@
             }
         }
 
-        /**
-         * Checks for the latest version of ViewSort on GitHub.
-         */
         async function checkVersion() {
             try {
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`);
