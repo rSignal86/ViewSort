@@ -1172,7 +1172,7 @@
       "relatedTerritories": []
     },
     "United Kingdom": {
-      "prefixes": ["G", "M", "2E", "2I", "2J", "2M", "2U", "2W", "GM", "GW", "GI", "GU", "GJ", "GD"],
+      "prefixes": ["G", "M", "2E", "2I", "2J", "2M", "2U", "2W", "G8", "GM", "GW", "GI", "GU", "GJ", "GD"],
       "displayIntervals": ["G", "M", "2E - 2W", "GM", "GW", "GI", "GU", "GJ", "GD"],
       "hasQSLSortService": true,
       "relatedTerritories": ["Scotland", "Wales", "Northern Ireland", "Guernsey", "Jersey", "Isle of Man"]
