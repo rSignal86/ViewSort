@@ -532,7 +532,7 @@
     "Israel": {
       "prefixes": ["4X", "4Z"],
       "displayIntervals": ["4X - 4Z"],
-      "hasQSLSortService": true,
+      "hasQSLSortService": false,
       "relatedTerritories": []
     },
     "Italy": {
@@ -1036,7 +1036,7 @@
     "South Sudan": {
       "prefixes": ["Z8"],
       "displayIntervals": ["Z8"],
-      "hasQSLSortService": true,
+      "hasQSLSortService": false,
       "relatedTerritories": []
     },
     "Spain": {
