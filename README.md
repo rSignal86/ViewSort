@@ -1,5 +1,8 @@
 # ViewSort – Your Digital QSL Card Sorter
 
+## Download link: [Click here to download ViewSort](https://github.com/rSignal86/ViewSort/archive/refs/heads/main.zip)
+Pleas remeber that this is a zip file that you have to extract to a folder first before you can use it.
+
 ## ViewSort is a simple yet intelligent web tool built to help amateur radio operators efficiently sort their QSL cards before mailing them.  
 It validates, organizes, and flags callsigns according to common QSL bureau rules. If you don't know how to sort QSL cards, ViewSort will do it for you.  
 All you have to do is write the callsign into the program and note the number it gives you back on the card.  
