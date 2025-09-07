@@ -42,7 +42,6 @@ While ViewSort does not transmit personal data, the following third-party servic
 A full **Data Processing Agreement** is available as part of this repository to clarify the processing practices and responsibilities. You can find it here:
 
 - `Data_Processing_Agreement.md` – Human-readable Markdown version
-- `Data_Processing_Agreement.pdf` – Printable/downloadable version
 
 These documents outline the scope of processing, sub-processors, user responsibilities, and contact information.
 
@@ -55,3 +54,4 @@ For privacy-related questions or requests, you may contact the project maintaine
 ---
 
 [2025] ViewSort
+
