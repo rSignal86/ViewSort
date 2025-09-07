@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ViewSort - Your Digital QSL Card Sorter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400&display=swap" rel="stylesheet" />
     <style>
         body {
             background-color: black;
@@ -24,6 +24,7 @@
         .primary-buttons {
             display: flex;
             gap: 5px;
+            align-items: stretch;
         }
         .secondary-buttons {
             display: flex;
@@ -49,41 +50,34 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        #add-button {
-            background-color: #28a745;
-            color: white;
+        #add-button { background-color: #28a745; color: white; }
+        #sort-button { background-color: #007bff; color: white; }
+        #clear-button { background-color: #dc3545; color: white; }
+        #help-button { background-color: #ffc107; color: black; }
+        #refresh-button { background-color: #6c757d; color: white; }
+
+        /*
+         * NEW: Pair container that visually "splits" the old Generate button into two equal parts.
+         * It stays hidden until sorting is done.
+         */
+        #generate-pair {
+            display: none;              /* shown after sorting */
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            align-items: stretch;
         }
-        #sort-button {
-            background-color: #007bff;
-            color: white;
-        }
-        #clear-button {
-            background-color: #dc3545;
-            color: white;
-        }
-        #help-button {
-            background-color: #ffc107;
-            color: black;
-        }
-        #refresh-button {
-            background-color: #6c757d;
-            color: white;
-        }
-        #generate-pdf-button {
-            background-color: #17a2b8;
-            color: white;
-            display: none;
-        }
-        #callsign-list-input div, #callsign-sorted-list-output div {
+        #generate-pdf-button { background-color: #17a2b8; color: white; }
+        #generate-stats-pdf-button { background-color: #20c997; color: #04110c; }
+
+        #callsign-list-input div,
+        #callsign-sorted-list-output div {
             margin: 6px;
             padding: 6px;
             font-size: 20px;
             font-family: Inconsolata, monospace;
             font-feature-settings: "zero";
         }
-        .invalid-output {
-            color: yellow;
-        }
+        .invalid-output { color: yellow; }
         .invalid-note {
             font-size: 14px;
             display: inline-block;
@@ -102,13 +96,8 @@
             font-size: 16px;
             text-align: left;
         }
-        #help-text p {
-            margin: 10px 0;
-        }
-        #callsign-sorted-list-output {
-            display: block;
-            visibility: visible;
-        }
+        #help-text p { margin: 10px 0; }
+        #callsign-sorted-list-output { display: block; visibility: visible; }
         .loading-indicator {
             display: none;
             font-size: 14px;
@@ -120,11 +109,17 @@
 <body>
     <h1>ViewSort - Your Digital QSL Card Sorter</h1>
     <div class="input-container">
-        <input type="text" id="callsign-input" placeholder="Enter callsign...">
+        <input type="text" id="callsign-input" placeholder="Enter callsign..." />
         <div class="primary-buttons">
             <button id="add-button" onclick="addCallsign()">Add QSL Card [ENTER]</button>
             <button id="sort-button" onclick="displaySortedCallsigns()">Start Sorting [SPACE]</button>
-            <button id="generate-pdf-button" onclick="generatePDF()">Generate PDF [F10]</button>
+
+            <!-- NEW: "Split" generate area into two buttons inside a pair container -->
+            <div id="generate-pair" aria-label="PDF actions">
+                <button id="generate-pdf-button" onclick="generatePDF()" aria-label="Generate strips PDF">Generate PDF [F10]</button>
+                <button id="generate-stats-pdf-button" onclick="generateStatsPDF()" aria-label="Generate stats PDF">StatPage PDF [F3]</button>
+            </div>
+
             <button id="help-button" onclick="toggleHelpMessage()">Help [F9]</button>
         </div>
         <div class="secondary-buttons">
@@ -146,11 +141,13 @@
         const callsignSortedListOutput = document.getElementById('callsign-sorted-list-output');
         const versionMessage = document.getElementById('version-message');
         const helpText = document.getElementById('help-text');
-        const generatePdfButton = document.getElementById('generate-pdf-button');
         const sortButton = document.getElementById('sort-button');
         const refreshButton = document.getElementById('refresh-button');
         const clearButton = document.getElementById('clear-button');
         const loadingIndicator = document.getElementById('loading-indicator');
+        const generatePair = document.getElementById('generate-pair');
+        const generatePdfButton = document.getElementById('generate-pdf-button');
+        const generateStatsPdfButton = document.getElementById('generate-stats-pdf-button');
 
         // Verify DOM elements
         const missingElements = [];
@@ -159,11 +156,13 @@
         if (!callsignSortedListOutput) missingElements.push('callsign-sorted-list-output');
         if (!versionMessage) missingElements.push('version-message');
         if (!helpText) missingElements.push('help-text');
-        if (!generatePdfButton) missingElements.push('generate-pdf-button');
         if (!sortButton) missingElements.push('sort-button');
         if (!refreshButton) missingElements.push('refresh-button');
         if (!clearButton) missingElements.push('clear-button');
         if (!loadingIndicator) missingElements.push('loading-indicator');
+        if (!generatePair) missingElements.push('generate-pair');
+        if (!generatePdfButton) missingElements.push('generate-pdf-button');
+        if (!generateStatsPdfButton) missingElements.push('generate-stats-pdf-button');
 
         if (missingElements.length > 0) {
             console.error('Missing DOM elements:', missingElements.join(', '));
@@ -178,11 +177,11 @@
         let prefixData = null;
 
         // === Configuration ===
-        const PREFIX_DATA_URL = 'https://raw.githubusercontent.com/rSignal86/ViewSort/main/data/prefixList.json';
-        const CURRENT_VERSION = 'GHv3.3.1';
-        const GITHUB_REPO = 'rSignal86/ViewSort';
+        const PreFixList = 'https://raw.githubusercontent.com/rSignal86/ViewSort/main/data/PreFixList.json';
+        const ViewSortVersion = 'GHv3.4.0';
+        const GithubRepositoryProject = 'rSignal86/ViewSort';
 
-        // === Event Listeners ===
+        // === Event Listeners & Hotkeys ===
         function handleEnter(event) {
             if (event.key === 'Enter' || event.code === 'Enter') {
                 const input = callsignInput.value.trim();
@@ -206,10 +205,20 @@
         }
 
         function handleF10(event) {
+            // Generate Strips PDF
             if (event.key === 'F10') {
                 event.preventDefault();
-                if (generatePdfButton.style.display === 'inline-block') {
+                if (generatePair.style.display !== 'none') {
                     generatePDF();
+                }
+            }
+        }
+
+        function handleF3(event) {
+            if (event.key === 'F3') {
+                event.preventDefault();
+                if (generatePair.style.display !== 'none') {
+                    generateStatsPDF();
                 }
             }
         }
@@ -218,24 +227,25 @@
         callsignInput.addEventListener('keydown', handleSpace);
         document.addEventListener('keydown', handleF9);
         document.addEventListener('keydown', handleF10);
+        document.addEventListener('keydown', handleF3);
 
         // === Data Fetching ===
         async function fetchPrefixData() {
             try {
                 loadingIndicator.style.display = 'inline';
                 const cacheBuster = `?t=${Date.now()}`;
-                const response = await fetch(PREFIX_DATA_URL + cacheBuster, { cache: 'no-cache' });
+                const response = await fetch(PreFixList + cacheBuster, { cache: 'no-cache' });
                 if (!response.ok) {
-                    throw new Error(`HTTP error ${response.status}: Could not fetch prefix data`);
+                    throw new Error(`HTTP error ${response.status}: Could not fetch prefix list`);
                 }
                 const data = await response.json();
 
                 // Validate JSON structure
                 if (!data || typeof data !== 'object' || !data.countries || !data.version) {
-                    throw new Error('Invalid prefix data structure');
+                    throw new Error('Invalid prefix list structure');
                 }
                 if (!Object.keys(data.countries).length) {
-                    throw new Error('Prefix data contains no countries');
+                    throw new Error('prefix list contains no countries');
                 }
                 if (data.version !== '3.3.0') {
                     console.warn(`Version mismatch: Expected 3.3.0, got ${data.version}`);
@@ -244,7 +254,7 @@
                 loadingIndicator.style.display = 'none';
                 return data;
             } catch (error) {
-                console.error('Error fetching prefix data:', error.message);
+                console.error('Error fetching prefix list:', error.message);
                 loadingIndicator.style.display = 'none';
                 return null;
             }
@@ -255,15 +265,15 @@
                 prefixData = await fetchPrefixData();
                 if (!prefixData) {
                     sortButton.disabled = true;
-                    versionMessage.textContent = 'Failed to load prefix data. Please try again later.';
+                    versionMessage.textContent = 'Failed to load prefix list. Please try again later.';
                 } else {
                     sortButton.disabled = false;
-                    versionMessage.textContent = isInitial ? '' : 'Prefix data refreshed successfully.';
+                    versionMessage.textContent = isInitial ? '' : 'prefix list refreshed successfully.';
                 }
                 if (isInitial) await checkVersion();
             } catch (error) {
-                console.error('Error loading prefix data:', error.message);
-                versionMessage.textContent = 'Failed to load prefix data. Please try again.';
+                console.error('Error loading prefix list:', error.message);
+                versionMessage.textContent = 'Failed to load prefix list. Please try again.';
             }
         }
 
@@ -276,12 +286,10 @@
                 );
                 return { country: country || null, isValid: !!country };
             },
-
             getDisplayIntervals(country) {
                 if (!prefixData || !prefixData.countries[country]) return [];
                 return prefixData.countries[country].displayIntervals || [];
             },
-
             hasQSLSortService(country) {
                 if (!prefixData || !prefixData.countries[country]) return false;
                 return prefixData.countries[country].hasQSLSortService || false;
@@ -328,7 +336,8 @@
                 callsigns = [];
                 counter = 0;
                 callsignSortedListOutput.innerHTML = '';
-                generatePdfButton.style.display = 'none';
+                // Hide both PDF buttons on reset
+                generatePair.style.display = 'none';
                 helpText.style.display = 'none';
                 helpText.innerHTML = '';
                 isHelpVisible = false;
@@ -343,7 +352,7 @@
         function extractPrefix(callsign) {
             try {
                 if (!prefixData) {
-                    console.warn('No prefix data available');
+                    console.warn('No prefix list available');
                     return '';
                 }
                 const cleanCallsign = callsign.split('/')[0];
@@ -365,36 +374,39 @@
         function sortCallsigns() {
             try {
                 if (!prefixData) {
-                    console.error('Cannot sort callsigns: prefix data not loaded');
+                    console.error('Cannot sort callsigns: prefix list not loaded');
                     return [];
                 }
-                return [...callsigns].filter(item => {
-                    if (!item.callsign) {
-                        console.warn('Invalid callsign object:', item);
-                        return false;
-                    }
-                    return true;
-                }).map(item => {
-                    const prefix = extractPrefix(item.callsign);
-                    const { country, isValid } = prefixUtils.lookupPrefix(prefix);
-                    const isNoQSL = country && !prefixUtils.hasQSLSortService(country);
-                    const isUnknown = !isValid;
-                    return { ...item, country, isNoQSL, isUnknown };
-                }).sort((a, b) => {
-                    const countryA = a.country || '';
-                    const countryB = b.country || '';
-                    if (countryA !== countryB) {
-                        return countryA.localeCompare(countryB);
-                    }
-                    const prefixA = extractPrefix(a.callsign);
-                    const prefixB = extractPrefix(b.callsign);
-                    const aIndex = prefixData.countries[countryA]?.prefixes.indexOf(prefixA) || 0;
-                    const bIndex = prefixData.countries[countryB]?.prefixes.indexOf(prefixB) || 0;
-                    if (aIndex !== bIndex) {
-                        return aIndex - bIndex;
-                    }
-                    return a.callsign.localeCompare(b.callsign);
-                });
+                return [...callsigns]
+                    .filter(item => {
+                        if (!item.callsign) {
+                            console.warn('Invalid callsign object:', item);
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map(item => {
+                        const prefix = extractPrefix(item.callsign);
+                        const { country, isValid } = prefixUtils.lookupPrefix(prefix);
+                        const isNoQSL = country && !prefixUtils.hasQSLSortService(country);
+                        const isUnknown = !isValid;
+                        return { ...item, country, isNoQSL, isUnknown };
+                    })
+                    .sort((a, b) => {
+                        const countryA = a.country || '';
+                        const countryB = b.country || '';
+                        if (countryA !== countryB) {
+                            return countryA.localeCompare(countryB);
+                        }
+                        const prefixA = extractPrefix(a.callsign);
+                        const prefixB = extractPrefix(b.callsign);
+                        const aIndex = prefixData.countries[countryA]?.prefixes.indexOf(prefixA) || 0;
+                        const bIndex = prefixData.countries[countryB]?.prefixes.indexOf(prefixB) || 0;
+                        if (aIndex !== bIndex) {
+                            return aIndex - bIndex;
+                        }
+                        return a.callsign.localeCompare(b.callsign);
+                    });
             } catch (error) {
                 console.error('Error sorting callsigns:', error.message);
                 return [];
@@ -404,7 +416,7 @@
         function displaySortedCallsigns() {
             try {
                 if (!prefixData) {
-                    versionMessage.textContent = 'Cannot sort: prefix data not loaded.';
+                    versionMessage.textContent = 'Cannot sort: prefix list not loaded.';
                     return;
                 }
                 callsignListInput.innerHTML = '';
@@ -413,6 +425,7 @@
                 isHelpVisible = false;
                 isSorted = true;
                 window.speechSynthesis.cancel();
+
                 const sorted = sortCallsigns();
                 callsignSortedListOutput.style.display = 'block';
                 callsignSortedListOutput.style.visibility = 'visible';
@@ -434,99 +447,219 @@
                     callsignSortedListOutput.appendChild(div);
                 });
 
-                generatePdfButton.style.display = 'inline-block';
+                // SHOW the generate pair after valid sorting action
+                generatePair.style.display = 'grid';
             } catch (error) {
                 console.error('Error displaying sorted callsigns:', error.message);
             }
         }
 
         function generatePDF() {
-    try {
-        if (!prefixData) {
-            console.error('Cannot generate PDF: prefix data not loaded');
-            versionMessage.textContent = 'Cannot generate PDF: prefix data not loaded.';
-            return;
-        }
-        if (!window.jspdf) {
-            console.error('jsPDF library not loaded');
-            versionMessage.textContent = 'PDF generation failed: jsPDF not loaded.';
-            return;
-        }
-        if (!callsigns.length) {
-            versionMessage.textContent = 'No callsigns to include in PDF.';
-            return;
-        }
+            try {
+                if (!prefixData) {
+                    console.error('Cannot generate PDF: prefix list not loaded');
+                    versionMessage.textContent = 'Cannot generate PDF: prefix list not loaded.';
+                    return;
+                }
+                if (!window.jspdf) {
+                    console.error('jsPDF library not loaded');
+                    versionMessage.textContent = 'PDF generation failed: jsPDF not loaded.';
+                    return;
+                }
+                if (!callsigns.length) {
+                    versionMessage.textContent = 'No callsigns to include in PDF.';
+                    return;
+                }
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 15;
-        let yPosition = margin;
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 15;
+                let yPosition = margin;
 
-        const sorted = sortCallsigns();
+                const sorted = sortCallsigns();
 
-        // Filter: Only include countries with QSL bureau service
-        const countriesIncluded = new Set(
-            sorted
-                .filter(item => !item.isNoQSL)
-                .map(item => item.country)
-                .filter(Boolean)
-        );
-        const sortedCountries = Array.from(countriesIncluded).sort((a, b) => a.localeCompare(b));
+                // Filter: Only include countries with QSL bureau service
+                const countriesIncluded = new Set(
+                    sorted
+                        .filter(item => !item.isNoQSL)
+                        .map(item => item.country)
+                        .filter(Boolean)
+                );
+                const sortedCountries = Array.from(countriesIncluded).sort((a, b) => a.localeCompare(b));
 
-        // Main section – only countries with QSL bureau service
-        sortedCountries.forEach(country => {
-            if (yPosition + 25 > pageHeight - margin) {
-                doc.addPage();
-                yPosition = margin;
+                // Main section – only countries with QSL bureau service
+                sortedCountries.forEach(country => {
+                    if (yPosition + 25 > pageHeight - margin) {
+                        doc.addPage();
+                        yPosition = margin;
+                    }
+
+                    doc.setLineWidth(0.5);
+                    doc.setLineDash([2, 2], 0);
+                    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+                    doc.setLineDash();
+                    yPosition += 5;
+
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    const countryText = country;
+                    const countryTextWidth = doc.getTextWidth(countryText);
+                    doc.text(countryText, (pageWidth - countryTextWidth) / 2, yPosition);
+                    yPosition += 6;
+
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'normal');
+                    const intervals = prefixUtils.getDisplayIntervals(country).join(', ');
+                    const intervalsText = intervals ? `(${intervals})` : '';
+                    const intervalsTextWidth = doc.getTextWidth(intervalsText);
+                    doc.text(intervalsText, (pageWidth - intervalsTextWidth) / 2, yPosition);
+                    yPosition += 6;
+
+                    doc.setFontSize(8);
+                    const adText = 'Generated by ViewSort - Your Digital QSL Card Sorter (github.com/rSignal86/ViewSort)';
+                    const adTextWidth = doc.getTextWidth(adText);
+                    doc.text(adText, (pageWidth - adTextWidth) / 2, yPosition);
+                    yPosition += 5;
+
+                    doc.setLineWidth(0.5);
+                    doc.setLineDash([2, 2], 0);
+                    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+                    doc.setLineDash();
+                    yPosition += 10;
+                });
+
+                if (countriesIncluded.size === 0) {
+                    versionMessage.textContent = 'No valid callsigns to include in PDF.';
+                    return;
+                }
+
+                doc.save('ViewSort - StripLabels');
+            } catch (error) {
+                console.error('Error generating PDF:', error.message);
+                versionMessage.textContent = 'Failed to generate PDF. Please try again.';
             }
-
-            doc.setLineWidth(0.5);
-            doc.setLineDash([2, 2], 0);
-            doc.line(margin, yPosition, pageWidth - margin, yPosition);
-            doc.setLineDash();
-            yPosition += 5;
-
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            const countryText = country;
-            const countryTextWidth = doc.getTextWidth(countryText);
-            doc.text(countryText, (pageWidth - countryTextWidth) / 2, yPosition);
-            yPosition += 6;
-
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            const intervals = prefixUtils.getDisplayIntervals(country).join(', ');
-            const intervalsText = intervals ? `(${intervals})` : '';
-            const intervalsTextWidth = doc.getTextWidth(intervalsText);
-            doc.text(intervalsText, (pageWidth - intervalsTextWidth) / 2, yPosition);
-            yPosition += 6;
-
-            doc.setFontSize(8);
-            const adText = 'Generated by ViewSort - Your Digital QSL Card Sorter (github.com/rSignal86/ViewSort)';
-            const adTextWidth = doc.getTextWidth(adText);
-            doc.text(adText, (pageWidth - adTextWidth) / 2, yPosition);
-            yPosition += 5;
-
-            doc.setLineWidth(0.5);
-            doc.setLineDash([2, 2], 0);
-            doc.line(margin, yPosition, pageWidth - margin, yPosition);
-            doc.setLineDash();
-            yPosition += 10;
-        });
-
-        if (countriesIncluded.size === 0) {
-            versionMessage.textContent = 'No valid callsigns to include in PDF.';
-            return;
         }
 
-        doc.save('ViewSort_QSL_Strips.pdf');
-    } catch (error) {
-        console.error('Error generating PDF:', error.message);
-        versionMessage.textContent = 'Failed to generate PDF. Please try again.';
-    }
-}
+        function generateStatsPDF() {
+            try {
+                if (!prefixData) {
+                    console.error('Cannot generate Stats PDF: prefix list not loaded');
+                    versionMessage.textContent = 'Cannot generate Stats PDF: prefix list not loaded.';
+                    return;
+                }
+                if (!window.jspdf) {
+                    console.error('jsPDF library not loaded');
+                    versionMessage.textContent = 'PDF generation failed: jsPDF not loaded.';
+                    return;
+                }
+                if (!callsigns.length) {
+                    versionMessage.textContent = 'No callsigns to include in Stats PDF.';
+                    return;
+                }
+
+                const sorted = sortCallsigns();
+
+                // Only include destinations that will actually be sent via the bureau
+                const valid = sorted.filter(item => !item.isNoQSL && !item.isUnknown && item.country);
+                if (!valid.length) {
+                    versionMessage.textContent = 'No valid destinations for Stats PDF.';
+                    return;
+                }
+
+                // Group by country
+                const byCountry = valid.reduce((acc, item) => {
+                    if (!acc[item.country]) acc[item.country] = [];
+                    acc[item.country].push({ callsign: item.callsign, number: item.number });
+                    return acc;
+                }, {});
+
+                // Sort countries A-Z and each list by callsign
+                const countries = Object.keys(byCountry).sort((a, b) => a.localeCompare(b));
+                countries.forEach(c => byCountry[c].sort((a, b) => a.callsign.localeCompare(b.callsign)));
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 12;
+                let y = margin;
+
+                // Header
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(18);
+                const title = 'ViewSort - Your Digital QSL Card Sorter | StatPage';
+                doc.text(title, margin, y);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                const when = new Date().toLocaleString();
+                const summary = `Generated: ${when}  |  Countries: ${countries.length}  |  Cards: ${valid.length}  |   github.com/rSignal86/ViewSort`;
+                y += 6;
+                doc.text(summary, margin, y);
+                y += 4;
+
+                // Draw a thin line
+                doc.setLineWidth(0.2);
+                doc.line(margin, y, pageWidth - margin, y);
+                y += 6;
+
+                // Column headers helper
+                function renderTableHeader() {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(11);
+                    doc.text('S/N', margin, y);
+                    doc.text('Callsign', margin + 12, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
+                    y += 5;
+                }
+
+                // Page-break helper
+                function ensureSpace(linesNeeded = 10) {
+                    if (y + linesNeeded > pageHeight - margin) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                }
+
+                countries.forEach(country => {
+                    const items = byCountry[country];
+                    const count = items.length;
+                    const intervals = prefixUtils.getDisplayIntervals(country).join(', ');
+
+                    ensureSpace(18);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.text(`${country} (${count})`, margin, y);
+                    if (intervals) {
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(9);
+                        const intText = `Country prefix and sorting rule: ${intervals}`;
+                        const w = doc.getTextWidth(intText);
+                        doc.text(intText, pageWidth - margin - w, y);
+                    }
+                    y += 6;
+
+                    renderTableHeader();
+
+                    items.forEach(({ number, callsign }) => {
+                        ensureSpace(6);
+                        doc.text(String(number), margin, y);
+                        doc.text(String(callsign), margin + 12, y);
+                        y += 5;
+                    });
+
+                    // Section spacing
+                    y += 4;
+                });
+
+                doc.save('ViewSort - StatPage');
+            } catch (error) {
+                console.error('Error generating Stats PDF:', error.message);
+                versionMessage.textContent = 'Failed to generate Stats PDF. Please try again.';
+            }
+        }
 
         function toggleHelpMessage() {
             try {
@@ -535,11 +668,12 @@
                     "Enter a callsign in the input field and press ENTER or click the green 'Add QSL Card' button. Each callsign gets a number to write on your card for sorting.",
                     "When ready, press SPACE or click the blue 'Start Sorting' button to sort callsigns alphabetically by country.",
                     "Check the sorted list for warnings: 'Unknown prefix' means you have to verify the callsign for typing error; 'Cannot be sent with the bureau' means use another mailing method.",
-                    "After sorting, the turquoise 'Generate PDF' button appears. Press F10 or click it to create strips with country names, that you can print out and use.",
+                    "After sorting, you'll see two new turquoise/green buttons: 'Generate PDF' (F10) to create country strips, and 'Statpage PDF' (F3) to create a per-country list with card numbers.",
                     "Press F9 or click the yellow 'Help' button to show or hide this guide, with an option for voice narration.",
-                    "Click the gray 'Refresh Data' button to update prefix data if needed.",
+                    "Click the gray 'Refresh Data' button to update prefix list if needed.",
                     "Click the red 'Clear All' button to reset everything and start over.",
                     "And by the way, if you see a mistake like a missing prefix, you can find the email adress to Lima Bravo Six Quebec Juliet on Q R Z.com or call him on 1 4 5 500.",
+                    "This program is made by a radio amateur for radio amateurs with passion.",
                     "Happy sorting! 7 3."
                 ];
 
@@ -578,15 +712,15 @@
 
         async function checkVersion() {
             try {
-                const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`);
+                const response = await fetch(`https://api.github.com/repos/${GithubRepositoryProject}/releases/latest`);
                 if (!response.ok) throw new Error('Could not fetch version info');
                 const data = await response.json();
                 const latestVersion = data.tag_name;
 
-                if (latestVersion && latestVersion !== CURRENT_VERSION) {
-                    versionMessage.innerHTML = `New version available: <strong>${latestVersion}</strong>. Visit <a href="https://github.com/${GITHUB_REPO}" target="_blank">GitHub</a> to download.`;
+                if (latestVersion && latestVersion !== ViewSortVersion) {
+                    versionMessage.innerHTML = `New version available: <strong>${latestVersion}</strong>. Visit <a href="https://github.com/${GithubRepositoryProject}" target="_blank">GitHub</a> to download.`;
                 } else {
-                    versionMessage.textContent = `You are using the latest version: ${CURRENT_VERSION}.`;
+                    versionMessage.textContent = `You are using the latest version: ${ViewSortVersion}.`;
                 }
             } catch (error) {
                 console.error('Version check failed:', error.message);
@@ -599,4 +733,3 @@
     </script>
 </body>
 </html>
-
