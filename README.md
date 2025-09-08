@@ -90,6 +90,8 @@ You can safely use it for personal use, clubs, or events without compromising an
   - Added more shortcut keys to various buttons for improved usability
 - **GHv3.4.0**
   - Added **StatPage PDF** generation feature for statistical overview of sorted QSL cards, it uses **F3** shortcut key
+- **GHv3.4.1**
+  - Bugfix: Path so json fil was wrong, it came in bit letters on where it was not supposed to, changed PreFixList.json to prefixList.json LB6QJ was not in the mood.
 
 ---
 
