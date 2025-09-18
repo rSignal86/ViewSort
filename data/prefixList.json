@@ -839,7 +839,7 @@
       "prefixes": ["3Y", "LA", "LB", "LC", "LD", "LE", "LF", "LG", "LH", "LI", "LJ", "LK", "LL", "LM", "LN", "JW", "JX"],
       "displayIntervals": ["LA - LN", "JW - JX", "3Y"],
       "hasQSLSortService": true,
-      "relatedTerritories": ["Svalbard", "Jan Mayen", "Bouvet Island"]
+      "relatedTerritories": ["Svalbard", "Jan Mayen", "Bouvet Island", "Peter I Island", "Queen Maud land"]
     },
     "Oman": {
       "prefixes": ["A4"],
