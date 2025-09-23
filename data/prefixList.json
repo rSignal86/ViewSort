@@ -1162,7 +1162,7 @@
     "Ukraine": {
       "prefixes": ["UR", "US", "UT", "UU", "UV", "UW", "UX", "UY", "UZ", "EM", "EN", "EO"],
       "displayIntervals": ["UR - UZ", "EM - EO"],
-      "hasQSLSortService": false,
+      "hasQSLSortService": true,
       "relatedTerritories": []
     },
     "United Arab Emirates - UAE": {
