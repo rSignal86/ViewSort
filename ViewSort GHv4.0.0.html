@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ViewSort GHv4.0.0 – QSL Card Sorter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet"/>
+    
+    <style>
+        :root {
+            --bg: #000;
+            --text: #e0e0e0;
+            --green: #28a745;
+            --cyan: #17a2b8;
+            --teal: #20c997;
+            --console-bg: #000;
+            --console-text: #00ff41;
+            --console-info: #00b7eb;
+            --console-success: #00ff9d;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inconsolata', monospace;
+            padding: 1.5rem;
+            line-height: 1.4;
+        }
+
+        h1 { text-align:center; margin-bottom:1.5rem; font-size:2.1rem; }
+
+        .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:1.5rem; }
+
+        input[type="text"] {
+            padding:0.9rem 1.2rem;
+            font-size:1.25rem;
+            width:320px;
+            max-width:100%;
+            background:#111;
+            color:white;
+            border:1px solid #444;
+            border-radius:6px;
+            text-transform:uppercase;
+        }
+
+        button {
+            padding:0.9rem 1.4rem;
+            font-size:1.1rem;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover { filter:brightness(1.12); }
+
+        .btn-add     { background:var(--green); color:white; }
+        .btn-pdf     { background:var(--cyan);  color:white; }
+        .btn-stat    { background:var(--teal);  color:black; }
+        .btn-refresh { background:#6c757d;      color:white; }
+        .btn-lang    { background:#6f42c1;      color:white; }
+        .btn-console { background:#198754;      color:white; }
+
+        .output-area {
+            max-width:900px;
+            margin:0 auto 2rem;
+            font-size:1.35rem;
+            background:#0a0a0a;
+            padding:1rem;
+            border-radius:6px;
+        }
+
+        .output-area div {
+            padding:0.5rem 0.8rem;
+            margin:0.4rem 0;
+            background:#111;
+            border-left:4px solid #444;
+            border-radius:4px;
+        }
+
+        .invalid { color:#ffcc00; background:#1a1100; border-left-color:#ffcc00; }
+        .note { font-size:0.75rem; color:#ffcc99; margin-left:0.8rem; }
+
+        #snitcher-console {
+            position:fixed;
+            top:80px;
+            left:60px;
+            width:460px;
+            height:320px;
+            background:var(--console-bg);
+            color:var(--console-text);
+            border:1px solid var(--console-text);
+            border-radius:6px;
+            overflow:hidden;
+            z-index:1000;
+            resize:both;
+            min-width:320px;
+            min-height:180px;
+            display:none;
+        }
+
+        #console-header {
+            background:#111;
+            padding:0.6rem 1rem;
+            cursor:move;
+            font-weight:bold;
+            border-bottom:1px solid #222;
+        }
+
+        #console-content {
+            padding:0.8rem;
+            height:calc(100% - 38px);
+            overflow-y:auto;
+            font-size:0.95rem;
+        }
+
+        .log-info    { color: var(--console-info); }
+        .log-success { color: var(--console-success); }
+        .log-warning { color: #ffaa00; }
+        .log-error   { color: #ff4444; }
+
+        .status { text-align:center; margin:1rem 0; color:#ffcc00; }
+    </style>
+</head>
+<body>
+
+<h1>ViewSort</h1>
+
+<div class="controls">
+    <input type="text" id="callsign" placeholder="ENTER CALLSIGN →" autofocus/>
+    <button class="btn-add" id="btn-add">Add [ENTER]</button>
+    
+    <div id="pdf-buttons" style="display:none; gap:8px;">
+        <button class="btn-pdf" id="btn-pdf">Generate Labels [F10]</button>
+        <button class="btn-stat" id="btn-stat">Generate Stats [F3]</button>
+    </div>
+
+    <button class="btn-refresh" id="btn-refresh">Refresh Data</button>
+    <button class="btn-lang" id="btn-lang">Speech Language</button>
+    <button class="btn-console" id="btn-console">Snitcher</button>
+
+    <div id="lang-menu" style="position:absolute; background:#111; border:1px solid #444; border-radius:6px; padding:8px; display:none; z-index:1001;">
+        <button data-lang="en-US">English</button>
+        <button data-lang="no-NO">Norwegian</button>
+        <button data-lang="de-DE">German</button>
+        <button data-lang="ja-JP">Japanese</button>
+        <button data-lang="zh-CN">Chinese (Mandarin)</button>
+    </div>
+</div>
+
+<div class="output-area" id="output"></div>
+
+<div class="status" id="status">Waiting for prefix data...</div>
+
+<div id="snitcher-console">
+    <div id="console-header">Snitcher Console v1.0</div>
+    <div id="console-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// ──────────────────────────────────────────────────────────────
+//  ViewSort
+// ──────────────────────────────────────────────────────────────
+
+const { jsPDF } = window.jspdf;
+
+const el = {
+    input: document.getElementById('callsign'),
+    output: document.getElementById('output'),
+    status: document.getElementById('status'),
+    pdfButtons: document.getElementById('pdf-buttons'),
+    console: document.getElementById('snitcher-console'),
+    consoleContent: document.getElementById('console-content'),
+    langMenu: document.getElementById('lang-menu'),
+    langButton: document.getElementById('btn-lang')
+};
+
+let callsigns = [];
+let counter = 1;
+let prefixData = null;
+let consoleVisible = false;
+let isDragging = false;
+let dragOffset = { x:0, y:0 };
+let speechLang = 'en-US';
+
+const PREFIX_URL = 'https://raw.githubusercontent.com/rSignal86/ViewSort/main/data/prefixList.json';
+const VERSION = 'GHv4.0.0';
+
+function log(message, type = 'normal') {
+    if (!consoleVisible) return;
+    const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const line = document.createElement('div');
+    line.textContent = `[${time}] ${message}`;
+    
+    if (type === 'info')    line.className = 'log-info';
+    if (type === 'success') line.className = 'log-success';
+    if (type === 'warning') line.className = 'log-warning';
+    if (type === 'error')   line.className = 'log-error';
+    
+    el.consoleContent.appendChild(line);
+    el.consoleContent.scrollTop = el.consoleContent.scrollHeight;
+}
+
+function loadPrefixData() {
+    log("Initiating prefix data download sequence...", "info");
+    el.status.textContent = 'Loading prefix data...';
+    
+    fetch(PREFIX_URL + '?t=' + Date.now())
+        .then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return r.json();
+        })
+        .then(data => {
+            prefixData = data;
+            log("Prefix database acquired successfully ✓", "success");
+            log(`Loaded version: ${data.version || 'unknown'}`, "info");
+            el.status.textContent = "Ready – awaiting your QSL cards 73!";
+        })
+        .catch(err => {
+            log(`Critical failure during prefix load: ${err.message}`, "error");
+            el.status.textContent = "Prefix load failed – offline mode activated";
+        });
+}
+
+function extractPrefix(callsign) {
+    if (!prefixData) return '';
+    const clean = callsign.split('/')[0].toUpperCase();
+    const all = Object.values(prefixData.countries || {})
+        .flatMap(c => c.prefixes || []);
+    return all.filter(p => clean.startsWith(p))
+        .sort((a,b)=>b.length-a.length)[0] || '';
+}
+
+function getCountryInfo(prefix) {
+    if (!prefixData || !prefix) return null;
+    for (const [country, info] of Object.entries(prefixData.countries || {})) {
+        if (info.prefixes?.includes(prefix)) return { country, info };
+    }
+    return null;
+}
+
+function addCallsign() {
+    const val = el.input.value.trim().toUpperCase();
+    if (!val) return;
+
+    log(`New QSL Card detected: ${val}`, "info");
+
+    const prefix = extractPrefix(val);
+    const info = getCountryInfo(prefix);
+
+    const card = {
+        callsign: val,
+        number: counter++,
+        prefix,
+        country: info?.country || null,
+        noBureau: info ? !info.info.hasQSLSortService : false,
+        unknown: !info
+    };
+
+    callsigns.push(card);
+    el.input.value = '';
+    el.input.focus();
+
+    log(`Card registered → ${val} #${card.number} (${card.country || '???'})`, "success");
+    speakNumber(card.number);
+    renderSortedList();
+
+    if (callsigns.length > 0) el.pdfButtons.style.display = 'flex';
+}
+
+function speakNumber(nr) {
+    try {
+        const u = new SpeechSynthesisUtterance(String(nr));
+        u.lang = speechLang;
+        speechSynthesis.speak(u);
+        log(`informing user about card number: ${nr}`, "info");
+    } catch (e) {}
+}
+
+function sortCallsigns() {
+    return [...callsigns].sort((a,b) => {
+        const ca = a.country || 'ZZZ-UNKNOWN';
+        const cb = b.country || 'ZZZ-UNKNOWN';
+        if (ca !== cb) return ca.localeCompare(cb);
+
+        if (a.prefix !== b.prefix) {
+            const ia = a.country ? prefixData.countries[a.country].prefixes.indexOf(a.prefix) : 9999;
+            const ib = b.country ? prefixData.countries[b.country].prefixes.indexOf(b.prefix) : 9999;
+            if (ia !== ib) return ia - ib;
+        }
+        return a.callsign.localeCompare(b.callsign);
+    });
+}
+
+function renderSortedList() {
+    const sorted = sortCallsigns();
+    el.output.innerHTML = sorted.length === 0 ? '<div>Waiting for your first QSL card...</div>' : '';
+
+    sorted.forEach(c => {
+        const d = document.createElement('div');
+        let txt = `${c.callsign} <strong>#${c.number}</strong>`;
+        if (c.noBureau) txt += ' <span class="note">NOT BUREAU</span>';
+        if (c.unknown)  txt += ' <span class="note">Unknown prefix</span>';
+        d.innerHTML = txt;
+        if (c.noBureau || c.unknown) d.className = 'invalid';
+        el.output.appendChild(d);
+    });
+}
+
+// ─── PDF ────────────────────────────────────────────────────────
+function generateLabelPDF() {
+    if (!callsigns.length) return alert("No cards to print yet!");
+    
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    const pw = doc.internal.pageSize.getWidth();
+    let y = 15;
+
+    const sorted = sortCallsigns();
+    const countries = [...new Set(
+        sorted.filter(c => !c.noBureau && !c.unknown && c.country)
+              .map(c => c.country)
+    )].sort();
+
+    countries.forEach(country => {
+        if (y > 270) { doc.addPage(); y = 15; }
+
+        doc.setLineWidth(0.5);
+        doc.setLineDash([3,3]);
+        doc.line(10, y, pw-10, y);
+        doc.setLineDash([]);
+
+        y += 8;
+
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        const w = doc.getTextWidth(country);
+        doc.text(country, (pw - w)/2, y);
+        y += 7;
+
+        const intervals = prefixData?.countries?.[country]?.displayIntervals?.join(', ') || '';
+        if (intervals) {
+            doc.setFontSize(10);
+            const iw = doc.getTextWidth(`(${intervals})`);
+            doc.text(`(${intervals})`, (pw - iw)/2, y);
+            y += 6;
+        }
+
+        doc.setFontSize(8);
+        doc.text(`Generated by ViewSort ${VERSION}`, (pw - doc.getTextWidth(`Generated by ViewSort ${VERSION}`))/2, y);
+        y += 12;
+    });
+
+    doc.save("ViewSort-Labels.pdf");
+    log("Label PDF generated – ready for printing!", "success");
+}
+
+function generateStatsPDF() {
+    if (!callsigns.length) return alert("Nothing to show yet!");
+
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    let y = 20;
+    const m = 15;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('no-NO', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    const timeStr = now.toLocaleTimeString('no-NO', {hour:'2-digit', minute:'2-digit'});
+
+    // Header
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("ViewSort Statistics", m, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated: ${dateStr} at ${timeStr}`, m, y);
+    y += 6;
+    doc.text(`Version: ${VERSION} • Total cards: ${callsigns.length}`, m, y);
+    y += 10;
+
+    doc.setLineWidth(0.3);
+    doc.line(m, y, 210-m, y);
+    y += 10;
+
+    const sorted = sortCallsigns();
+    const valid = sorted.filter(c => !c.noBureau && !c.unknown && c.country);
+    const byCountry = valid.reduce((acc, c) => {
+        if (!acc[c.country]) acc[c.country] = [];
+        acc[c.country].push(c);
+        return acc;
+    }, {});
+
+    Object.keys(byCountry).sort().forEach(country => {
+        if (y > 260) { doc.addPage(); y = 20; }
+
+        const items = byCountry[country];
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(`${country} (${items.length} cards)`, m, y);
+        y += 8;
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text("S/N     Callsign", m, y);
+        y += 6;
+
+        doc.setLineWidth(0.2);
+        doc.line(m, y, 210-m, y);
+        y += 8;
+
+        items.forEach(c => {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.text(`${String(c.number).padStart(3,'0')}     ${c.callsign}`, m, y);
+            y += 7;
+        });
+
+        y += 12;
+    });
+
+    doc.save("ViewSort-Statistics.pdf");
+    log("Statistics PDF created – mission accomplished!", "success");
+}
+
+// ─── Console & Drag ─────────────────────────────────────────────
+function toggleConsole() {
+    consoleVisible = !consoleVisible;
+    el.console.style.display = consoleVisible ? 'block' : 'none';
+    if (consoleVisible) {
+        log("Omg, i have been activated", "success");
+        log("i should probably hide the cards.", "success");
+        log("Error: Not possibly, snitcher i online", "success");
+    }
+}
+
+el.console.querySelector('#console-header').onpointerdown = e => {
+    isDragging = true;
+    dragOffset.x = e.clientX - el.console.offsetLeft;
+    dragOffset.y = e.clientY - el.console.offsetTop;
+    e.preventDefault();
+};
+
+document.onpointermove = e => {
+    if (isDragging) {
+        el.console.style.left = `${e.clientX - dragOffset.x}px`;
+        el.console.style.top  = `${e.clientY - dragOffset.y}px`;
+    }
+};
+
+document.onpointerup = () => isDragging = false;
+
+// Events
+el.input.addEventListener('keypress', e => { if (e.key === 'Enter') addCallsign(); });
+document.getElementById('btn-add').onclick = addCallsign;
+document.getElementById('btn-pdf').onclick = generateLabelPDF;
+document.getElementById('btn-stat').onclick = generateStatsPDF;
+document.getElementById('btn-refresh').onclick = loadPrefixData;
+document.getElementById('btn-console').onclick = toggleConsole;
+
+// Language selector
+el.langButton.onclick = e => {
+    const m = el.langMenu;
+    const r = e.target.getBoundingClientRect();
+    m.style.left = `${r.left}px`;
+    m.style.top = `${r.bottom + 8}px`;
+    m.style.display = m.style.display === 'block' ? 'none' : 'block';
+};
+
+el.langMenu.onclick = e => {
+    if (e.target.tagName === 'BUTTON') {
+        speechLang = e.target.dataset.lang;
+        log(`Speech system switched to ${e.target.textContent}`, "success");
+        el.langMenu.style.display = 'none';
+    }
+};
+
+document.addEventListener('click', e => {
+    if (!el.langButton.contains(e.target) && !el.langMenu.contains(e.target)) {
+        el.langMenu.style.display = 'none';
+    }
+});
+
+// Start sequence
+log("ViewSort core awakening...", "info");
+loadPrefixData();
+</script>
+</body>
+</html>
